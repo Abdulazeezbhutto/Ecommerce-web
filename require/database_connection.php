@@ -2,18 +2,14 @@
 
 require("database_settings.php");
 
+class database_connection {
+    public $host_name       = "";
+    public $user_name       = "";
+    public $password        = "";
+    public $database_name   = "";
+    public $connection      = "";
 
-class database_connection{
-    public $host_name       ="";
-    public $user_name       ="";
-    public $password        ="";
-    public $database_name   ="";
-    public $connection      ="";
-
-
-
-    public function __construct($host_name,$user_name,$password,$database_name){
-
+    public function __construct($host_name, $user_name, $password, $database_name) {
         $this->host_name = $host_name;
         $this->user_name = $user_name;
         $this->password = $password;
@@ -27,16 +23,4 @@ class database_connection{
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-?>
+$connection = new database_connection($host_name, $user_name, $password, $database_name);
