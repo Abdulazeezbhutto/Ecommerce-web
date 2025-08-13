@@ -1,36 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Ecommerce</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
-</head>
+include("includes/admin_configs.php");
+require("../require/database_connection.php");
+
+
+
+class page_configs{
+
+
+
+    public static function get_total_sales($connection){
+        $query = "SELECT IFNULL(SUM(total_ammount), 0) AS total_amount FROM orders";
+
+        // return 10;
+        $result = mysqli_query($connection->connection, $query);
+        
+        // return 10;
+
+        
+        if ($result) {
+
+            $row = mysqli_fetch_assoc($result);
+            return $row['total_amount'] ?? 0; // Return 0 if null
+        }
+        return 0;
+
+    }
+
+
+    public static function get_total_orders($connection){
+        $query = "SELECT COUNT(*) AS total_orders FROM orders;";
+        $result = mysqli_query($connection->connection, $query);
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+            return $row['total_orders'];
+        }
+        return 0;
+    }
+
+    public static function get_total_customers($connection){
+
+        $query = "SELECT COUNT(*) AS total_users FROM users WHERE user_id != 1";
+        $result = mysqli_query($connection->connection, $query);
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+            return $row['total_users'];
+        }
+        return 0;
+
+    }
+
+    public static function get_total_products($connection){
+        $query = "SELECT COUNT(*) AS total_products FROM products";
+        $result = mysqli_query($connection->connection, $query);
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+            return $row['total_products'];
+        }
+        return 0;
+    }
+
+    public static function fetch_orders($connection){
+        // return 10;
+
+        $query = "SELECT orders.*, users.first_name, users.last_name, users.email 
+                    FROM orders
+                    INNER JOIN users ON users.user_id = orders.user_id
+                    ORDER BY orders.placed_at DESC
+                    LIMIT 5;";
+        // return 10;
+
+        $result = mysqli_query($connection->connection, $query);
+        // return 10;
+
+        if ($result) {
+            return $result;
+        }
+        return false;
+    }
+
+}
+
+
+admin_configs::header();
+
+
+?>
 
 <body class="bg-light">
 
     <div class="container-fluid">
         <div class="row">
 
+
             <!-- Sidebar -->
-            <nav class="col-md-2 d-none d-md-block bg-dark text-light min-vh-100 p-3">
-                <h4 class="mb-4">Admin Panel</h4>
-                <div class="nav flex-column">
-                    <a class="nav-link text-light" href="dashboard.php">📊 Dashboard</a>
-                    <a class="nav-link text-light" href="products.php">🛍 Products</a>
-                    <a class="nav-link text-light" href="orders.php">📦 Orders</a>
-                    <a class="nav-link text-light" href="users.php">👥 Users</a>
-                    <a class="nav-link text-light" href="category.php">📂 Categories</a>
-                    <a class="nav-link text-light" href="#">⚙ Settings</a>
-                    <a class="nav-link text-danger" href="../auth/logout.php">🚪 Logout</a>
-                </div>
-            </nav>
+          <?php
+          admin_configs::nav_bar();
+          admin_configs::side_bar();
+          ?>
 
             <!-- Main Content -->
-            <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-
+            <main class="col-md-10 ms-sm-auto px-md-4 py-4" id="">
                 <!-- Dashboard Header -->
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-4">
                     <h2>Dashboard</h2>
@@ -39,28 +109,38 @@
                 <!-- Stats Cards -->
                 <div class="row g-4">
                     <div class="col-md-3" data-aos="fade-up">
+                        <!--Total sales from DB-->
                         <div class="card text-center p-3">
                             <h6>Total Sales</h6>
-                            <h3>$15,230</h3>
+                            <h3><?php echo page_configs::get_total_sales($connection); ?></h3>
                         </div>
+                        <!--Total sales from DB-->
                     </div>
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                        <!--Total orders from DB-->
+                        
                         <div class="card text-center p-3">
                             <h6>Total Orders</h6>
-                            <h3>325</h3>
+                            <h3><?php echo page_configs::get_total_orders($connection); ?></h3>
                         </div>
+                        <!--Total orders from DB-->
                     </div>
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                        <!--Total customers from DB-->
                         <div class="card text-center p-3">
                             <h6>Customers</h6>
-                            <h3>1,245</h3>
+                            <h3><?php echo page_configs::get_total_customers($connection); ?></h3>
                         </div>
+                        <!--Total cutomers from DB-->
+
                     </div>
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                        <!--Total products from DB-->
                         <div class="card text-center p-3">
                             <h6>Products</h6>
-                            <h3>542</h3>
+                            <h3><?php echo page_configs::get_total_products($connection); ?></h3>
                         </div>
+                        <!--Total orders from DB-->
                     </div>
                 </div>
 
@@ -68,70 +148,43 @@
                 <div class="mt-5" data-aos="fade-up">
                     <h4 class="mb-4 fw-bold">Latest Orders</h4>
                     <div class="row g-4">
-
+                        <?php 
+                        $result = page_configs::fetch_orders($connection);
+                        // var_dump($latest);
+                        if(mysqli_num_rows($result) > 0){
+                            while ($row = mysqli_fetch_assoc($result)){
+                                ?>
+                                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+                                        <div class="card shadow-sm border-0 rounded-4">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">Order #<?php echo $row['order_id']??""?></h5>
+                                                <p class="mb-1"><strong>Customer:</strong><?php echo $row['first_name']." ".$row['last_name']??""?></p>
+                                                <p class="mb-1"><strong>Status:</strong>
+                                                    <span class="badge bg-success"><?php echo $row['order_status']??""?></span>
+                                                </p>
+                                                <p class="mb-1"><strong>Total:</strong> $<?php echo $row['total_amount']??""?></p>
+                                                <p class="mb-1"><strong>Date:</strong> <?php echo $row['placed_at']??""?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                            }
+                        }else{
+                            echo "<p>No recent orders found.</p>";
+                        }
+                        ?>
                         <!-- Order Card -->
-                        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
-                            <div class="card shadow-sm border-0 rounded-4">
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold">Order #1001</h5>
-                                    <p class="mb-1"><strong>Customer:</strong> John Doe</p>
-                                    <p class="mb-1"><strong>Status:</strong>
-                                        <span class="badge bg-success">Completed</span>
-                                    </p>
-                                    <p class="mb-1"><strong>Total:</strong> $250</p>
-                                    <p class="mb-1"><strong>Date:</strong> 2025-08-10</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Order Card -->
-                        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
-                            <div class="card shadow-sm border-0 rounded-4">
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold">Order #1002</h5>
-                                    <p class="mb-1"><strong>Customer:</strong> Jane Smith</p>
-                                    <p class="mb-1"><strong>Status:</strong>
-                                        <span class="badge bg-warning">Pending</span>
-                                    </p>
-                                    <p class="mb-1"><strong>Total:</strong> $150</p>
-                                    <p class="mb-1"><strong>Date:</strong> 2025-08-11</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Order Card -->
-                        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
-                            <div class="card shadow-sm border-0 rounded-4">
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold">Order #1003</h5>
-                                    <p class="mb-1"><strong>Customer:</strong> Mike Johnson</p>
-                                    <p class="mb-1"><strong>Status:</strong>
-                                        <span class="badge bg-danger">Cancelled</span>
-                                    </p>
-                                    <p class="mb-1"><strong>Total:</strong> $80</p>
-                                    <p class="mb-1"><strong>Date:</strong> 2025-08-11</p>
-                                </div>
-                            </div>
-                        </div>
+                        
 
                     </div>
                 </div>
 
 
             </main>
+            
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
-    </script>
 
-</body>
 
-</html>
+  <?php admin_configs::footer(); ?>

@@ -1,23 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Product - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-</head>
-<body>
+<?php 
+include("includes/admin_configs.php");
+require("../require/database_connection.php");
 
+
+admin_configs::header();
+
+?>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="#">Admin Dashboard</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-    </nav>
+    <?php admin_configs::nav_bar(); ?>
 
     <!-- Main Container -->
     <div class="container py-4" data-aos="fade-up">
@@ -28,21 +18,32 @@
 
         <div class="card shadow-sm">
             <div class="card-body">
-                <form action="#" method="POST" enctype="multipart/form-data">
+                <form action="includes/products.php" method="POST" enctype="multipart/form-data">
                     
                     <div class="mb-3">
                         <label class="form-label">Product Name</label>
                         <input type="text" name="product_name" class="form-control" required>
                     </div>
 
+
+                    <?php
+                 
+                    $query = "SELECT * FROM categories";
+                    $result = mysqli_query($connection->connection, $query);
+                    ?>
                     <div class="mb-3">
                         <label class="form-label">Category</label>
                         <select name="category_id" class="form-select" required>
-                            <option value="">Select Category</option>
-                            <option value="1">Electronics</option>
-                            <option value="2">Clothing</option>
-                            <option value="3">Home Appliances</option>
-                            <option value="4">Books</option>
+                            <option>--Select Category--</option>
+                            <?php
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo "<option value='" . $row['category_id'] . "'>" . htmlspecialchars($row['category_name']) . "</option>";
+                                }
+                            } else {
+                                echo "<option>No Category Found</option>";
+                            }
+                            ?>
                         </select>
                     </div>
 
@@ -66,17 +67,11 @@
                         <input type="file" name="product_image" class="form-control" required>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Add Product</button>
+                    <button type="submit" class="btn btn-primary" name = "submit" value = "add_product" >Add Product</button>
                 </form>
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init();
-    </script>
-</body>
-</html>
+  <?php admin_configs::footer(); ?>
