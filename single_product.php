@@ -2,11 +2,19 @@
 <?php
 
 include("includes/web_configs.php");
+// include("require/products.php");
+
+
 
 WebConfig::header();
 WebConfig::navbar();
 
 
+$product = products_oper::fetch_product_by_id($_REQUEST['productid'] ?? 0);
+
+echo "<pre>";
+print_r($product);
+echo "</pre>";
 
 
 
@@ -19,34 +27,30 @@ WebConfig::navbar();
       
       <!-- Product Images -->
       <div class="col-md-6">
-        <img id="mainImage" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80" alt="Product" class="img-fluid rounded mb-3" style="height: 450px; object-fit: cover; width: 100%;">
-        <div class="d-flex gap-2">
-          <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=150&q=80" alt="Thumb 1" class="img-thumbnail product-thumb active" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
-          <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=150&q=80" alt="Thumb 2" class="img-thumbnail product-thumb" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
-          <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=150&q=80" alt="Thumb 3" class="img-thumbnail product-thumb" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
-        </div>
+        <img id="mainImage" src="uploads/<?php echo $product['image_path']??''?>" alt="Product" class="img-fluid rounded mb-3" style="height: 450px; object-fit: cover; width: 100%;">
       </div>
       
       <!-- Product Details -->
       <div class="col-md-6">
-        <h2 class="text-uppercase fw-bold">Stylish Sunglasses</h2>
+        <h2 class="text-uppercase fw-bold"><?php echo $product['product_name'] ?? '' ?></h2>
         <div class="d-flex align-items-center gap-3 mb-3">
           <div class="text-warning fs-5">
             &#9733;&#9733;&#9733;&#9733;&#9734;
           </div>
-          <span class="badge bg-success text-uppercase">In Stock</span>
+          <span class="badge bg-success text-uppercase"><?php echo $product['stock_quamtitiy'] > 0 ? "In Stock":"Out of Stock";?></span>
         </div>
-        <h3 class="text-primary fw-bold mb-4">$49.99</h3>
-        <p>Experience stylish comfort with these sleek sunglasses featuring UV protection and a lightweight frame — perfect for any occasion.</p>
+      <h3 class="text-primary fw-bold mb-4">$<?php echo $product['price']??"" ?></h3>
+        <p><?php echo $product['description']??""?></p>
         <ul>
           <li>100% UV protection</li>
           <li>Lightweight and durable frame</li>
           <li>Available in multiple colors</li>
           <li>One size fits most</li>
         </ul>
-        <form class="d-flex align-items-center gap-3 mt-4">
+        <form class="d-flex align-items-center gap-3 mt-4" action = "cart.php" method = "POST">
           <label for="quantity" class="form-label mb-0 fw-semibold">Quantity:</label>
           <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" style="width: 80px;">
+          <input type="hidden" name = "product_id" value = "<?php echo $product['product_id']??""?>">
           <button type="submit" class="btn btn-primary px-4">Add to Cart</button>
         </form>
       </div>

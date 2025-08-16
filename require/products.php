@@ -38,6 +38,17 @@ class products_oper
 
         return $categories;
     }
+
+    public static function fetch_product_by_id($id){
+        $query = "SELECT * FROM products WHERE product_id = $id";
+        $result = mysqli_query(self::$Connection, $query);
+
+        if (!$result) {
+            die("Query failed: " . mysqli_error(self::$Connection));
+        }
+
+        return mysqli_fetch_assoc($result);
+    }
 }
 
 // Set the connection before calling any methods

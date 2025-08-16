@@ -41,6 +41,7 @@ admin_configs::nav_bar();
                           <div class="col-md-6">
                                 <label for="searchCategory" class="form-label">Search by Category</label>
                                 <select class="form-select" id="searchCategory" onchange="getCategory(this.value)">
+                                    <option>--Select--</option>
                                             <?php
                                             if (mysqli_num_rows($result) > 0) {
                                                 while ($row = mysqli_fetch_assoc($result)) {

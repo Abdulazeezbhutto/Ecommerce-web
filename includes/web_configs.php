@@ -1,5 +1,6 @@
 <?php
 include("require/products.php");
+// require("require/database_connection.php");
 session_start();
 
 // global $connection;
@@ -65,7 +66,7 @@ class WebConfig
                             foreach ($categories as $category) {
                                 ?>
                                 <li>
-                                    <a class="dropdown-item" href="category.php?cat_id=<?php echo htmlspecialchars($category['category_id']); ?>">
+                                    <a class="dropdown-item" href="category.php?cat_id=<?php echo htmlspecialchars($category['category_id']); ?>&name=<?php echo htmlspecialchars($category['category_name']); ?>">
                                         <?php echo htmlspecialchars($category['category_name']); ?>
                                     </a>
                                 </li>
@@ -132,20 +133,35 @@ class WebConfig
                             </p>
                         </div>
 
-                        <!-- Products Links -->
-                        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
-                            <h6 class="text-uppercase fw-bold mb-4">Products</h6>
-                            <p><a href="#" class="text-light text-decoration-none">Men</a></p>
-                            <p><a href="#" class="text-light text-decoration-none">Women</a></p>
-                            <p><a href="#" class="text-light text-decoration-none">Kids</a></p>
-                            <p><a href="#" class="text-light text-decoration-none">Accessories</a></p>
-                        </div>
+                        <!-- Categories Section (Dynamic from DB) -->
+                       <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+    <h6 class="text-uppercase fw-bold mb-4">Products</h6>
+    <?php
+    global $categories;
+    if (!empty($categories)) {
+        foreach ($categories as $category) {
+            ?>
+            <p>
+                <a href="category.php?cat_id=<?php echo htmlspecialchars($category['category_id']); ?>" 
+                   class="text-light text-decoration-none">
+                   <?php echo htmlspecialchars($category['category_name']); ?>
+                </a>
+            </p>
+            <?php
+        }
+    } else {
+        ?>
+        <p><span class="text-light">No categories found</span></p>
+        <?php
+    }
+    ?>
+</div>
 
                         <!-- Useful Links -->
                         <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
                             <h6 class="text-uppercase fw-bold mb-4">Useful Links</h6>
-                            <p><a href="#" class="text-light text-decoration-none">Your Account</a></p>
-                            <p><a href="#" class="text-light text-decoration-none">Orders</a></p>
+                            <p><a href="auth/login.php" class="text-light text-decoration-none">Your Account</a></p>
+                            <p><a href="<?php isset($_SESSION['user'])?"user/dashboard.php":"auth/login.php "?>" class="text-light text-decoration-none">Orders</a></p>
                             <p><a href="#" class="text-light text-decoration-none">Help</a></p>
                             <p><a href="#" class="text-light text-decoration-none">Privacy Policy</a></p>
                         </div>
@@ -175,6 +191,7 @@ class WebConfig
                     </div>
                 </div>
             </footer>
+
 
 
             <!-- Bootstrap JS -->
