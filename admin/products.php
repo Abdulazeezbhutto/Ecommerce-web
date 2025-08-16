@@ -38,21 +38,20 @@ admin_configs::nav_bar();
                             $query = "SELECT * FROM categories";
                             $result = mysqli_query($connection->connection, $query);
                             ?>
-                            <div class="col-md-6">
+                          <div class="col-md-6">
                                 <label for="searchCategory" class="form-label">Search by Category</label>
-                                <select class="form-select" id="searchCategory">
-                                    <?php
-                                    if (mysqli_num_rows($result) > 0) {
-
-                                        while ($row = mysqli_fetch_assoc($result)) {
-                                            echo "<option value='" . $row['category_id'] . "'>" . htmlspecialchars($row['category_name']) . "</option>";
-                                        }
-                                    } else {
-                                        echo "<option > No Category Found..!</option>";
-                                    }
-                                    ?>
-                                </select>
-                            </div>
+                                <select class="form-select" id="searchCategory" onchange="getCategory(this.value)">
+                                            <?php
+                                            if (mysqli_num_rows($result) > 0) {
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    echo "<option value='" . $row['category_id'] . "'>" . htmlspecialchars($row['category_name']) . "</option>";
+                                                }
+                                            } else {
+                                                echo "<option>No Category Found..!</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
 
                             <!-- Search Button -->
                             <div class="col-12 d-flex justify-content-between align-items-center">

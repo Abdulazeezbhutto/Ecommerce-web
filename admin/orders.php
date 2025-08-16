@@ -1,5 +1,6 @@
 <?php
 include("includes/admin_configs.php");
+include("../require/database_connection.php");
 admin_configs::header();    
 ?>
 
@@ -16,75 +17,81 @@ admin_configs::header();
             <div class="card-header">
                 <h5 class="mb-0">All Orders</h5>
             </div>
-            <div class="card-body">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Total</th>
-                            <th>Payment</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Example Row -->
-                        <tr>
-                            <td>#1001</td>
-                            <td>
-                                <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="User">
-                                John Doe
-                            </td>
-                            <td>2025-08-10</td>
-                            <td><span class="badge bg-success">Completed</span></td>
-                            <td>$120.50</td>
-                            <td><span class="badge bg-primary">Paid</span></td>
-                            <td>
-                                <a href="view_order.php?id=1001" class="btn btn-sm btn-info text-white"><i class="bi bi-eye"></i></a>
-                                <a href="edit_order.php?id=1001" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-                                <a href="delete_order.php?id=1001" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#1002</td>
-                            <td>
-                                <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="User">
-                                Sarah Smith
-                            </td>
-                            <td>2025-08-09</td>
-                            <td><span class="badge bg-warning text-dark">Pending</span></td>
-                            <td>$85.00</td>
-                            <td><span class="badge bg-secondary">Unpaid</span></td>
-                            <td>
-                                <a href="view_order.php?id=1002" class="btn btn-sm btn-info text-white"><i class="bi bi-eye"></i></a>
-                                <a href="edit_order.php?id=1002" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-                                <a href="delete_order.php?id=1002" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#1003</td>
-                            <td>
-                                <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="User">
-                                Alex Brown
-                            </td>
-                            <td>2025-08-08</td>
-                            <td><span class="badge bg-danger">Cancelled</span></td>
-                            <td>$45.75</td>
-                            <td><span class="badge bg-secondary">Refunded</span></td>
-                            <td>
-                                <a href="view_order.php?id=1003" class="btn btn-sm btn-info text-white"><i class="bi bi-eye"></i></a>
-                                <a href="edit_order.php?id=1003" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-                                <a href="delete_order.php?id=1003" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
-                            </td>
-                        </tr>
-                        <!-- End Example Row -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+            <?php
+            $query = "SELECT 
+                        o.order_id,
+                        CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+                        o.placed_at,
+                        o.order_status,
+                        o.total_ammount,
+                        o.payment_status
+                    FROM orders o
+                    INNER JOIN users u ON o.user_id = u.user_id
+                    ORDER BY o.placed_at DESC;
+                    ";
+                    
+                    $result =  mysqli_query($connection->connection, $query);
+                    if(mysqli_num_rows($result) > 0){
+                        ?>
+                         <div class="card-body">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Total</th>
+                                            <th>Payment</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                        <?php
+                        while($row = mysqli_fetch_assoc($result)){
+                            ?>
+                            <tbody>
+                                <tr>
+                                    <td><?php echo $row['order_id']; ?></td>
+                                    <td><?php echo htmlspecialchars($row['customer_name']); ?></td>
+                                    <td><?php echo date("Y-m-d", strtotime($row['placed_at'])); ?></td>
+                                    <td>
+                                        <span class="badge <?php echo $row['order_status'] == 'Completed' ? 'bg-success' : ($row['order_status'] == 'Pending' ? 'bg-warning' : 'bg-danger'); ?>">
+                                            <?php echo htmlspecialchars($row['order_status']); ?>
+                                        </span>
+                                    </td>
+                                    <td>$<?php echo number_format($row['total_ammount'], 2); ?></td>
+                                    <td>
+                                        <span class="badge <?php echo $row['payment_status'] == 'Paid' ? 'bg-primary' : 'bg-secondary'; ?>">
+                                            <?php echo htmlspecialchars($row['payment_status']); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="view_order.php?id=<?php echo $row['order_id']; ?>" class="btn btn-sm btn-info text-white">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php
+
+                        }
+                        ?> 
+                                     </tbody>
+                                  </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+
+                    }else{
+                        ?>
+                        <div class="alert alert-warning" role="alert">
+                            No orders found.
+                        </div>
+                    <?php
+                    }
+            
+            ?>
 
     <!-- Bootstrap JS -->
    <?php admin_configs::footer();   ?>

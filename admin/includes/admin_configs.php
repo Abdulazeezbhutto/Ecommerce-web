@@ -252,6 +252,106 @@ function update_category(id,category_name){
     ajax_request.send("id=" + encodeURIComponent(id) + "&category_name=" + encodeURIComponent(category_name));
 }
 
+// search by category
+
+function getCategory(categoryId) {
+    if(categoryId) {
+       
+        ajax_request = null;
+
+        if(window.XMLHttpRequest) {
+            ajax_request = new XMLHttpRequest();
+        } else {
+            ajax_request = new ActiveXObject("Microsoft.XMLHTTP");
+
+        }
+
+        ajax_request.onreadystatechange = function() {
+            if (ajax_request.readyState === 4) {
+                if (ajax_request.status === 200) {
+                    document.getElementById("result").innerHTML = ajax_request.responseText;
+                } else {
+                    document.getElementById("result").innerHTML = "Error loading data.";
+                }
+            }
+        };
+
+        ajax_request.open("GET", "includes/ajax_process.php?action=searchByCategory&categoryId=" + encodeURIComponent(categoryId), true);
+        ajax_request.send();
+    }
+}
+
+
+// Users ajax
+
+function setActive(id) {
+    if (confirm("Do you want to activate this user?")) {
+       ajax_request = null;
+       if(window.XMLHttpRequest) {
+           ajax_request = new XMLHttpRequest();
+       } else {
+           ajax_request = new ActiveXObject("Microsoft.XMLHTTP");
+       }
+
+       ajax_request.onreadystatechange = function() {
+           if (ajax_request.readyState === 4) {
+               if (ajax_request.status === 200) {
+                   document.getElementById("usersTable").innerHTML = ajax_request.responseText;
+               } else {
+                   document.getElementById("usersTable").innerHTML = "Error loading data.";
+               }
+           }
+       };
+
+       ajax_request.open("GET", "includes/ajax_process.php?action=setActive&id=" + encodeURIComponent(id), true);
+       ajax_request.send();
+    }
+}
+function setInactive(id) {
+    if (confirm("Do you want to deactivate this user?")) {
+       ajax_request = null;
+       if(window.XMLHttpRequest) {
+           ajax_request = new XMLHttpRequest();
+       } else {
+           ajax_request = new ActiveXObject("Microsoft.XMLHTTP");
+       }
+       ajax_request.onreadystatechange = function() {
+           if (ajax_request.readyState === 4) {
+               if (ajax_request.status === 200) {
+                   document.getElementById("usersTable").innerHTML = ajax_request.responseText;
+               } else {
+                   document.getElementById("usersTable").innerHTML = "Error loading data.";
+               }
+           }
+       };
+       ajax_request.open("GET", "includes/ajax_process.php?action=setInactive&id=" + encodeURIComponent(id), true);
+       ajax_request.send();
+    }
+}
+
+function searchByCategory(status){
+    // console.log(status);
+    var ajax_request = null;
+
+    if(window.XMLHttpRequest) {
+        ajax_request = new XMLHttpRequest();
+    } else {
+        ajax_request = new ActiveXObject("Microsoft.XMLHTTP");
+
+    }
+
+    ajax_request.onreadystatechange = function() {
+        if (ajax_request.readyState === 4) {
+            if (ajax_request.status === 200) {
+                document.getElementById("usersTable").innerHTML = ajax_request.responseText;
+            } else {
+                document.getElementById("usersTable").innerHTML = "Error loading data.";
+            }
+        }
+    };
+    ajax_request.open("GET", "includes/ajax_process.php?action=searchuserByCategory&status=" + encodeURIComponent(status), true);
+    ajax_request.send();
+}
 
 
 
