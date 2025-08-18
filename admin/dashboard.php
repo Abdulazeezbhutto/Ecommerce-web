@@ -160,9 +160,9 @@ admin_configs::header();
                                                 <h5 class="card-title fw-bold">Order #<?php echo $row['order_id']??""?></h5>
                                                 <p class="mb-1"><strong>Customer:</strong><?php echo $row['first_name']." ".$row['last_name']??""?></p>
                                                 <p class="mb-1"><strong>Status:</strong>
-                                                    <span class="badge bg-success"><?php echo $row['order_status']??""?></span>
+                                                    <span class="badge bg-success"><?php echo $row['order_Status']??""?></span>
                                                 </p>
-                                                <p class="mb-1"><strong>Total:</strong> $<?php echo $row['total_amount']??""?></p>
+                                                <p class="mb-1"><strong>Total:</strong> $<?php echo $row['total_ammount']??""?></p>
                                                 <p class="mb-1"><strong>Date:</strong> <?php echo $row['placed_at']??""?></p>
                                             </div>
                                         </div>

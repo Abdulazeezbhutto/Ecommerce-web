@@ -21,6 +21,49 @@ class WebConfig
             <!-- Bootstrap CSS -->
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+
+            <script>
+                function addToCart(productId, userId, price, imagePath, productName, quantity) {
+
+                    var action = "cart_process";
+
+                    var ajax_request = null;
+                    if (window.XMLHttpRequest) {
+                        // For modern browsers
+                        ajax_request = new XMLHttpRequest();
+                    } else {
+                        // For older IE versions
+                        ajax_request = new ActiveXObject("Microsoft.XMLHTTP");
+
+                    }
+
+                    ajax_request.onreadystatechange = function () {
+                        if (ajax_request.readyState === 4) {
+                            if (ajax_request.status === 200) {
+                                // Response ko result div me show karo
+                                document.getElementById("result").innerHTML = ajax_request.responseText;
+                            } else {
+                                document.getElementById("result").innerHTML = "Error adding product to cart.";
+                            }
+                        }
+                    };
+
+                    ajax_request.open("POST", "includes/ajax_process.php", true);
+                    ajax_request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    ajax_request.send(
+                        "product_id=" + encodeURIComponent(productId) +
+                        "&action=" + encodeURIComponent(action) +
+                        "&user_id=" + encodeURIComponent(userId) +
+                        "&price=" + encodeURIComponent(price) +
+                        "&image_path=" + encodeURIComponent(imagePath) +
+                        "&product_name=" + encodeURIComponent(productName) +
+                        "&quantity=" + encodeURIComponent(quantity)
+                    );
+                }
+            </script>
+
+
+
             <style>
                 /* Reduce carousel height */
                 .small-carousel img {
@@ -33,83 +76,81 @@ class WebConfig
         <body>
 
             <?php
-    }    public static function navbar()
+    }
+    public static function navbar()
     {
 
         ?>
-          <nav class="navbar navbar-expand-lg bg-light shadow-sm sticky-top py-3">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold text-primary fs-3" href="index.php">ShopLogo</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <nav class="navbar navbar-expand-lg bg-light shadow-sm sticky-top py-3">
+                <div class="container-fluid">
+                    <a class="navbar-brand fw-bold text-primary fs-3" href="index.php"> <img
+                            src="assets/web_logo-removebg-preview.png" alt="" class="img-fluid" style="height: 50px;"></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            
-            <!-- Left Menu -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="shop.php">Shop</a></li>
-                
-                <!-- Categories Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Categories
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                        <?php
-                        global $categories;
-                        if (!empty($categories)) {
-                            foreach ($categories as $category) {
-                                ?>
-                                <li>
-                                    <a class="dropdown-item" href="category.php?cat_id=<?php echo htmlspecialchars($category['category_id']); ?>&name=<?php echo htmlspecialchars($category['category_name']); ?>">
-                                        <?php echo htmlspecialchars($category['category_name']); ?>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                        } else {
-                            ?>
-                            <li><span class="dropdown-item-text">No categories found</span></li>
-                            <?php
-                        }
-                        ?>
-                    </ul>
-                </li>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-                <li class="nav-item"><a class="nav-link" href="wishlist.php">Wishlist</a></li>
-                <li class="nav-item"><a class="nav-link" href="cart.php">Cart</a></li>
-                <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
-            </ul>
+                        <!-- Left Menu -->
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="shop.php">Shop</a></li>
 
-            <!-- Search Bar -->
-            <form class="d-flex me-3" role="search" method="GET" action="shop.php">
-                <input class="form-control me-2" type="search" name="search" placeholder="Search products..."
-                    aria-label="Search" />
-                <button class="btn btn-outline-primary" type="submit">Search</button>
-            </form>
+                            <!-- Categories Dropdown -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Categories
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+                                    <?php
+                                    global $categories;
+                                    if (!empty($categories)) {
+                                        foreach ($categories as $category) {
+                                            ?>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    href="category.php?cat_id=<?php echo htmlspecialchars($category['category_id']); ?>&name=<?php echo htmlspecialchars($category['category_name']); ?>">
+                                                    <?php echo htmlspecialchars($category['category_name']); ?>
+                                                </a>
+                                            </li>
+                                            <?php
+                                        }
+                                    } else {
+                                        ?>
+                                        <li><span class="dropdown-item-text">No categories found</span></li>
+                                        <?php
+                                    }
+                                    ?>
+                                </ul>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" href="cart.php">Cart</a></li>
+                            <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+                        </ul>
 
-            <!-- Account Section -->
-            <?php if (isset($_SESSION['user'])): ?>
-                <a href="auth/logout.php" class="btn btn-primary me-2">Logout</a>
-                <a href="<?php echo ($_SESSION['user']['role_id'] == 1) ? 'admin/' : 'user/'; ?>dashboard.php" class="btn btn-primary">
-                    View Profile
-                </a>
-            <?php else: ?>
-                <a href="auth/login.php" class="btn btn-primary">Account</a>
-            <?php endif; ?>
+                        <!-- Search Bar -->
+                        <form class="d-flex me-3" role="search" method="GET" action="shop.php">
+                            <input class="form-control me-2" type="search" name="search" placeholder="Search products..."
+                                aria-label="Search" />
+                            <button class="btn btn-outline-primary" type="submit">Search</button>
+                        </form>
 
-        </div>
-    </div>
-</nav>
+                        <!-- Account Section -->
+                        <?php if (isset($_SESSION['user'])): ?>
+                            <a href="auth/logout.php" class="btn btn-primary me-2">Logout</a>
+                            <a href="<?php echo ($_SESSION['user']['role_id'] == 1) ? 'admin/' : 'user/'; ?>dashboard.php"
+                                class="btn btn-primary">
+                                View Profile
+                            </a>
+                        <?php else: ?>
+                            <a href="auth/login.php" class="btn btn-primary">Account</a>
+                        <?php endif; ?>
 
-
-
-
+                    </div>
+                </div>
+            </nav>
 
             <?php
     }
@@ -126,42 +167,43 @@ class WebConfig
 
                         <!-- About Section -->
                         <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
-                            <h5 class="text-uppercase fw-bold mb-4 text-primary">YourShop</h5>
+                            <h5 class="text-uppercase fw-bold mb-4 text-primary">MyShop</h5>
                             <p>
-                                YourShop is your one-stop destination for the latest trends, high-quality products, and
+                                MyShop is your one-stop destination for the latest trends, high-quality products, and
                                 unbeatable deals.
                             </p>
                         </div>
 
                         <!-- Categories Section (Dynamic from DB) -->
-                       <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
-    <h6 class="text-uppercase fw-bold mb-4">Products</h6>
-    <?php
-    global $categories;
-    if (!empty($categories)) {
-        foreach ($categories as $category) {
-            ?>
-            <p>
-                <a href="category.php?cat_id=<?php echo htmlspecialchars($category['category_id']); ?>" 
-                   class="text-light text-decoration-none">
-                   <?php echo htmlspecialchars($category['category_name']); ?>
-                </a>
-            </p>
-            <?php
-        }
-    } else {
-        ?>
-        <p><span class="text-light">No categories found</span></p>
-        <?php
-    }
-    ?>
-</div>
+                        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+                            <h6 class="text-uppercase fw-bold mb-4">Products</h6>
+                            <?php
+                            global $categories;
+                            if (!empty($categories)) {
+                                foreach ($categories as $category) {
+                                    ?>
+                                    <p>
+                                        <a href="category.php?cat_id=<?php echo htmlspecialchars($category['category_id']); ?>"
+                                            class="text-light text-decoration-none">
+                                            <?php echo htmlspecialchars($category['category_name']); ?>
+                                        </a>
+                                    </p>
+                                    <?php
+                                }
+                            } else {
+                                ?>
+                                <p><span class="text-light">No categories found</span></p>
+                                <?php
+                            }
+                            ?>
+                        </div>
 
                         <!-- Useful Links -->
                         <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
                             <h6 class="text-uppercase fw-bold mb-4">Useful Links</h6>
                             <p><a href="auth/login.php" class="text-light text-decoration-none">Your Account</a></p>
-                            <p><a href="<?php isset($_SESSION['user'])?"user/dashboard.php":"auth/login.php "?>" class="text-light text-decoration-none">Orders</a></p>
+                            <p><a href="<?php isset($_SESSION['user']) ? "user/dashboard.php" : "auth/login.php " ?>"
+                                    class="text-light text-decoration-none">Orders</a></p>
                             <p><a href="#" class="text-light text-decoration-none">Help</a></p>
                             <p><a href="#" class="text-light text-decoration-none">Privacy Policy</a></p>
                         </div>

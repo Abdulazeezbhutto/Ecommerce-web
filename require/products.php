@@ -49,6 +49,22 @@ class products_oper
 
         return mysqli_fetch_assoc($result);
     }
+
+    public static function fetch_all_products(){
+        $query = "SELECT * FROM products";
+        $result = mysqli_query(self::$Connection,$query);
+        if(!$result){
+            die("Query failed: " . mysqli_error(self::$Connection));
+
+        }else{
+
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        }
+    }
+
+   
+
+   
 }
 
 // Set the connection before calling any methods

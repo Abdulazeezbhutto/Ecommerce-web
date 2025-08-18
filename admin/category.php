@@ -28,7 +28,7 @@ admin_configs::nav_bar();
                                 </tr>
                             </thead>
                             <?php
-                             $query = "SELECT * from categories";
+                            $query = "SELECT * from categories";
                             $result = mysqli_query($connection->connection, $query);
                             ?>
                                 <tbody>
