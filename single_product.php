@@ -43,8 +43,20 @@ $product = products_oper::fetch_product_by_id($_REQUEST['productid'] ?? 0);
 
         <!-- Add to Cart Form -->
         <form class="d-flex align-items-center gap-3 mt-4" action="" method="POST">
-          <label for="quantity" class="form-label mb-0 fw-semibold">Quantity:</label>
-          <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" style="width: 80px;">
+          <label for="quantity" class="form-label mb-0 fw-semibold">
+            Quantity: <?php echo $product['stock_quamtitiy'] ?? 0; ?>
+          </label>
+
+          <input type="number" 
+                 id="quantity" 
+                 name="quantity" 
+                 class="form-control" 
+                 value="1" 
+                 min="1" 
+                 max="<?php echo $product['stock_quamtitiy'] ?? 1; ?>" 
+                 style="width: 80px;"
+                 <?php echo (empty($product['stock_quamtitiy']) || $product['stock_quamtitiy'] <= 0) ? 'disabled' : ''; ?>>
+
           <input type="hidden" name="product_id" value="<?php echo $product['product_id'] ?? "" ?>">
           
           <?php if (isset($_SESSION['user'])) { ?>
@@ -56,12 +68,14 @@ $product = products_oper::fetch_product_by_id($_REQUEST['productid'] ?? 0);
                         '<?php echo addslashes($product['image_path']); ?>',
                         '<?php echo addslashes($product['product_name']); ?>',
                         document.getElementById('quantity').value
-                    )">
+                    )"
+                    <?php echo (empty($product['stock_quamtitiy']) || $product['stock_quamtitiy'] <= 0) ? 'disabled' : ''; ?>>
                 Add to Cart
             </button>
           <?php } else { ?>
             <!-- Guest: show login modal -->
-            <button type="button" class="btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <button type="button" class="btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#loginModal"
+              <?php echo (empty($product['stock_quamtitiy']) || $product['stock_quamtitiy'] <= 0) ? 'disabled' : ''; ?>>
               Add to Cart
             </button>
           <?php } ?>
