@@ -18,24 +18,24 @@ WebConfig::navbar();
     <h2 class="mb-4 text-center">Contact Us</h2>
     <div class="row justify-content-center">
       <div class="col-lg-7">
-        <form>
+        <form method = "POST" action = "contact_process.php">
           <div class="mb-3">
             <label for="name" class="form-label">Full Name</label>
-            <input type="text" class="form-control" id="name" placeholder="Your full name" required>
+            <input type="text" class="form-control" id="name" placeholder="Your full name" nsmr = "full_name" required>
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+            <input type="email" class="form-control" id="email" placeholder="name@example.com" name = "email"required>
           </div>
           <div class="mb-3">
             <label for="subject" class="form-label">Subject</label>
-            <input type="text" class="form-control" id="subject" placeholder="Subject" required>
+            <input type="text" class="form-control" id="subject" placeholder="Subject" name = "subject" required>
           </div>
           <div class="mb-3">
             <label for="message" class="form-label">Message</label>
-            <textarea class="form-control" id="message" rows="5" placeholder="Write your message here..." required></textarea>
+            <textarea class="form-control" id="message" rows="5" placeholder="Write your message here..."  name = "message" required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary w-100">Send Message</button>
+          <button type="submit" class="btn btn-primary w-100" name = "submit" value = "submit_message">Send Message</button>
         </form>
       </div>
     </div>

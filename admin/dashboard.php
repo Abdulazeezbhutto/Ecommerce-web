@@ -119,10 +119,13 @@ admin_configs::header();
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
                         <!--Total orders from DB-->
                         
-                        <div class="card text-center p-3">
-                            <h6>Total Orders</h6>
-                            <h3><?php echo page_configs::get_total_orders($connection); ?></h3>
-                        </div>
+                        <a href="orders.php" class="text-decoration-none text-dark">
+                            <div class="card text-center p-3 shadow-sm border-0 rounded-3 h-100">
+                                <h6>Total Orders</h6>
+                                <h3><?php echo page_configs::get_total_orders($connection); ?></h3>
+                            </div>
+                        </a>
+
                         <!--Total orders from DB-->
                     </div>
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
@@ -136,10 +139,13 @@ admin_configs::header();
                     </div>
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
                         <!--Total products from DB-->
-                        <div class="card text-center p-3">
-                            <h6>Products</h6>
-                            <h3><?php echo page_configs::get_total_products($connection); ?></h3>
-                        </div>
+                        <a href="products.php" class="text-decoration-none text-dark">
+                            <div class="card text-center p-3 shadow-sm border-0 rounded-3 h-100">
+                                <h6>Products</h6>
+                                <h3><?php echo page_configs::get_total_products($connection); ?></h3>
+                            </div>
+                        </a>
+
                         <!--Total orders from DB-->
                     </div>
                 </div>
@@ -155,19 +161,22 @@ admin_configs::header();
                             while ($row = mysqli_fetch_assoc($result)){
                                 ?>
                                 <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
-                                        <div class="card shadow-sm border-0 rounded-4">
-                                            <div class="card-body">
-                                                <h5 class="card-title fw-bold">Order #<?php echo $row['order_id']??""?></h5>
-                                                <p class="mb-1"><strong>Customer:</strong><?php echo $row['first_name']." ".$row['last_name']??""?></p>
-                                                <p class="mb-1"><strong>Status:</strong>
-                                                    <span class="badge bg-success"><?php echo $row['order_Status']??""?></span>
-                                                </p>
-                                                <p class="mb-1"><strong>Total:</strong> $<?php echo $row['total_ammount']??""?></p>
-                                                <p class="mb-1"><strong>Date:</strong> <?php echo $row['placed_at']??""?></p>
+                                        <a href="view_order.php?id=<?php echo $row['order_id']; ?>" class="text-decoration-none text-dark">
+                                            <div class="card shadow-sm border-0 rounded-4 h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title fw-bold">Order #<?php echo $row['order_id'] ?? "" ?></h5>
+                                                    <p class="mb-1"><strong>Customer:</strong> <?php echo $row['first_name'] . " " . $row['last_name'] ?? "" ?></p>
+                                                    <p class="mb-1"><strong>Status:</strong>
+                                                        <span class="badge bg-success"><?php echo $row['order_Status'] ?? "" ?></span>
+                                                    </p>
+                                                    <p class="mb-1"><strong>Total:</strong> $<?php echo $row['total_ammount'] ?? "" ?></p>
+                                                    <p class="mb-1"><strong>Date:</strong> <?php echo $row['placed_at'] ?? "" ?></p>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
-                                <?php
+                                    <?php
+
                             }
                         }else{
                             echo "<p>No recent orders found.</p>";

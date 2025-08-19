@@ -17,10 +17,12 @@ if (!isset($_COOKIE['cart'][$user_id]) || !is_array($_COOKIE['cart'][$user_id]) 
 
 // Calculate total amount
 $total_amount = 0;
+$total_items = 0;
 foreach ($_COOKIE['cart'][$user_id] as $product_id => $item_json) {
     $item = json_decode($item_json, true);
     if ($item && isset($item['price'], $item['quantity'])) {
         $total_amount += $item['price'] * $item['quantity'];
+        $total_items += $item['quantity'];
     }
 }
 
@@ -40,7 +42,24 @@ $query = "INSERT INTO orders (user_id, total_ammount, shipping_Address, order_St
 $result = mysqli_query($connection->connection, $query);
 
 if ($result) {
-    // Clear cart cookies
+    $order_id = mysqli_insert_id($connection->connection); // new order id
+
+   
+    foreach ($_COOKIE['cart'][$user_id] as $product_id => $item_json) {
+        $item = json_decode($item_json, true);
+        if ($item && isset($item['quantity'], $item['price'])) {
+            $quantity = (int)$item['quantity'];
+            $price    = (float)$item['price'];
+
+            // Decrease stock
+            $update_stock = "UPDATE products 
+                             SET stock_quamtitiy = stock_quamtitiy - $quantity 
+                             WHERE product_id = $product_id AND stock_quamtitiy >= $quantity";
+            mysqli_query($connection->connection, $update_stock);
+        }
+    }
+
+    
     foreach ($_COOKIE['cart'][$user_id] as $product_id => $item) {
         setcookie("cart[$user_id][$product_id]", "", time() - 3600, "/");
     }
