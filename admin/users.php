@@ -23,25 +23,25 @@ admin_configs::nav_bar();
                     <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
                     <input type="text" id="searchInput" class="form-control" placeholder="Search user...">
                 </div>
-             <select id="statusFilter" class="form-select form-select-sm" onchange="searchByCategory(this.value)">
-             <option value="">All Status</option>
-                <?php
-                $query = "SELECT  status FROM users";
-                $result = mysqli_query($connection->connection, $query);
-
-                if (mysqli_num_rows($result) > 0) {
-                    while ($row = mysqli_fetch_assoc($result)) {
-
-                       ?>
-                                <option value="<?php echo $row['status']; ?> "><?php echo ucfirst($row['status']);?></option>
-                       <?php
-                    }
-                }else{
-                    ?>
-                            <option value=""> Status Not Found</option>
+                <select id="statusFilter" class="form-select form-select-sm" onchange="searchByCategory(this.value)">
+                    <option value="">All Status</option>
                     <?php
-                }
-                 ?>
+                    $query = "SELECT  status FROM users";
+                    $result = mysqli_query($connection->connection, $query);
+
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+
+                            ?>
+                            <option value="<?php echo $row['status']; ?> "><?php echo ucfirst($row['status']); ?></option>
+                            <?php
+                        }
+                    } else {
+                        ?>
+                        <option value=""> Status Not Found</option>
+                        <?php
+                    }
+                    ?>
                 </select>
                 <a href="add_user.php" class="btn btn-success btn-sm shadow-sm">
                     <i class="bi bi-person-plus me-1"></i> Add User
@@ -62,7 +62,7 @@ admin_configs::nav_bar();
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody id = "users">
+                <tbody id="users">
                     <?php
                     if (mysqli_num_rows($users) > 0) {
                         while ($row = mysqli_fetch_assoc($users)) {
@@ -82,11 +82,13 @@ admin_configs::nav_bar();
                                 </td>
                                 <td class="text-center">
                                     <?php if ($row['status'] === "Active") { ?>
-                                        <button onclick="setInactive(<?php echo $row['user_id']; ?>)" class="btn btn-outline-danger btn-sm py-0 px-1">
+                                        <button onclick="setInactive(<?php echo $row['user_id']; ?>)"
+                                            class="btn btn-outline-danger btn-sm py-0 px-1">
                                             <i class="bi bi-x-circle"></i> Inactive
                                         </button>
                                     <?php } else { ?>
-                                        <button onclick="setActive(<?php echo $row['user_id']; ?>)" class="btn btn-outline-success btn-sm py-0 px-1">
+                                        <button onclick="setActive(<?php echo $row['user_id']; ?>)"
+                                            class="btn btn-outline-success btn-sm py-0 px-1">
                                             <i class="bi bi-check-circle"></i> Active
                                         </button>
                                     <?php } ?>

@@ -2,6 +2,11 @@
 session_start();
 require("require/database_connection.php");
 
+
+if(isset($_POST['cod_submit'])){
+    // Handle Cash on Delivery payment
+
+
 // Check if user is logged in
 $user_id = $_SESSION['user']['user_id'] ?? 0;
 if (!$user_id) {
@@ -31,25 +36,31 @@ $address = mysqli_real_escape_string($connection->connection, $_REQUEST['address
 $city    = mysqli_real_escape_string($connection->connection, $_REQUEST['city'] ?? '');
 $state   = mysqli_real_escape_string($connection->connection, $_REQUEST['state'] ?? '');
 $zip     = mysqli_real_escape_string($connection->connection, $_REQUEST['zip'] ?? '');
-$payment_method = mysqli_real_escape_string($connection->connection, $_REQUEST['payment_method'] ?? 'Credit Card');
+$payment_method = mysqli_real_escape_string($connection->connection, $_REQUEST['payment_method'] ?? '');
 
 $shipping_address = "$address, $city, $state, $zip";
 
 // Insert order into database
-$query = "INSERT INTO orders (user_id, total_ammount, shipping_Address, order_Status, payment_status, placed_at, updated_at) 
-          VALUES ('$user_id', '$total_amount', '$shipping_address', 'Pending', '$payment_method', NOW(), NOW())";
+$query = "INSERT INTO orders (user_id, total_ammount, shipping_address, order_status, payment_method, placed_at, updated_at) 
+          VALUES ('$user_id', '$total_amount', '$shipping_address', 'Pending', '$payment_method', NOW(), null)";
 
 $result = mysqli_query($connection->connection, $query);
 
 if ($result) {
     $order_id = mysqli_insert_id($connection->connection); // new order id
 
-   
+    // Insert order items
     foreach ($_COOKIE['cart'][$user_id] as $product_id => $item_json) {
         $item = json_decode($item_json, true);
         if ($item && isset($item['quantity'], $item['price'])) {
             $quantity = (int)$item['quantity'];
             $price    = (float)$item['price'];
+            $image    = mysqli_real_escape_string($connection->connection, $item['image']);
+
+            // Insert into order_items (order_id + image)
+            $query = "INSERT INTO order_items (order_id, image_path) 
+                      VALUES ('$order_id', '$image')";
+            mysqli_query($connection->connection, $query);
 
             // Decrease stock
             $update_stock = "UPDATE products 
@@ -59,7 +70,7 @@ if ($result) {
         }
     }
 
-    
+    // Clear cart cookies
     foreach ($_COOKIE['cart'][$user_id] as $product_id => $item) {
         setcookie("cart[$user_id][$product_id]", "", time() - 3600, "/");
     }
@@ -73,4 +84,15 @@ if ($result) {
     header("Location: cart.php?msg=Error placing order: $error");
     exit;
 }
+
+}
+elseif(isset($_POST['stripe_payment_id'])){
+    echo "<pre>";
+    print_r($_POST);
+    echo "</pre>";
+    
+
+    // setting key
+}
+
 ?>

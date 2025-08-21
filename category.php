@@ -20,12 +20,13 @@ $result = mysqli_query($connection->connection, $query);
   <div class="container">
     <nav aria-label="breadcrumb" class="mb-2">
       <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item active" aria-current="page"><?php echo $_GET['name']??""?></li>
+        <li class="breadcrumb-item active" aria-current="page"><?php echo $_GET['name'] ?? "" ?></li>
         <!-- <li class="breadcrumb-item active" aria-current="page">category</li> -->
       </ol>
     </nav>
-  
-    <p class="text-muted">Explore our latest collection of fashion products. Stay trendy and stylish with our handpicked items.</p>
+
+    <p class="text-muted">Explore our latest collection of fashion products. Stay trendy and stylish with our handpicked
+      items.</p>
   </div>
 </section>
 
@@ -52,30 +53,32 @@ $result = mysqli_query($connection->connection, $query);
           <!-- Product Card 1 -->
 
           <?php
-              if(mysqli_num_rows($result) > 0){
+          if (mysqli_num_rows($result) > 0) {
 
-                while($row=mysqli_fetch_assoc($result)){
-                  ?>
-                  <div class="col-sm-6 col-md-4">
-                      <div class="card h-100 shadow-sm">
-                        <img src="uploads/<?php echo $row['image_path']?>" class="card-img-top" alt="Product 1" style="height: 220px; object-fit: cover;">
-                        <div class="card-body d-flex flex-column">
-                          <h6 class="card-title text-uppercase"><?php echo $row['product_name']?></h6>
-                          <p class="fw-bold mb-2">$<?php echo $row['price']?></p>
-                          <a href="single_product.php?productid=<?php echo $row['product_id']; ?>" class="btn btn-outline-primary mt-auto">View Details</a>
-                        </div>
-                      </div>
-                    </div>
-                  
-                  
-                  <?php
+            while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+              <div class="col-sm-6 col-md-4">
+                <div class="card h-100 shadow-sm">
+                  <img src="uploads/<?php echo $row['image_path'] ?>" class="card-img-top" alt="Product 1"
+                    style="height: 220px; object-fit: cover;">
+                  <div class="card-body d-flex flex-column">
+                    <h6 class="card-title text-uppercase"><?php echo $row['product_name'] ?></h6>
+                    <p class="fw-bold mb-2">$<?php echo $row['price'] ?></p>
+                    <a href="single_product.php?productid=<?php echo $row['product_id']; ?>"
+                      class="btn btn-outline-primary mt-auto">View Details</a>
+                  </div>
+                </div>
+              </div>
 
-                }
 
-                }
-          
+              <?php
+
+            }
+
+          }
+
           ?>
-          
+
         </div>
       </main>
     </div>
@@ -85,4 +88,4 @@ $result = mysqli_query($connection->connection, $query);
 
 
 
-<?php WebConfig::footer();?>
+<?php WebConfig::footer(); ?>

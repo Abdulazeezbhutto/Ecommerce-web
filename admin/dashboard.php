@@ -5,19 +5,21 @@ require("../require/database_connection.php");
 
 
 
-class page_configs{
+class page_configs
+{
 
 
 
-    public static function get_total_sales($connection){
+    public static function get_total_sales($connection)
+    {
         $query = "SELECT IFNULL(SUM(total_ammount), 0) AS total_amount FROM orders";
 
         // return 10;
         $result = mysqli_query($connection->connection, $query);
-        
+
         // return 10;
 
-        
+
         if ($result) {
 
             $row = mysqli_fetch_assoc($result);
@@ -28,7 +30,8 @@ class page_configs{
     }
 
 
-    public static function get_total_orders($connection){
+    public static function get_total_orders($connection)
+    {
         $query = "SELECT COUNT(*) AS total_orders FROM orders;";
         $result = mysqli_query($connection->connection, $query);
         if ($result) {
@@ -38,7 +41,8 @@ class page_configs{
         return 0;
     }
 
-    public static function get_total_customers($connection){
+    public static function get_total_customers($connection)
+    {
 
         $query = "SELECT COUNT(*) AS total_users FROM users WHERE user_id != 1";
         $result = mysqli_query($connection->connection, $query);
@@ -50,7 +54,8 @@ class page_configs{
 
     }
 
-    public static function get_total_products($connection){
+    public static function get_total_products($connection)
+    {
         $query = "SELECT COUNT(*) AS total_products FROM products";
         $result = mysqli_query($connection->connection, $query);
         if ($result) {
@@ -60,7 +65,8 @@ class page_configs{
         return 0;
     }
 
-    public static function fetch_orders($connection){
+    public static function fetch_orders($connection)
+    {
         // return 10;
 
         $query = "SELECT orders.*, users.first_name, users.last_name, users.email 
@@ -94,10 +100,10 @@ admin_configs::header();
 
 
             <!-- Sidebar -->
-          <?php
-          admin_configs::nav_bar();
-          admin_configs::side_bar();
-          ?>
+            <?php
+            admin_configs::nav_bar();
+            admin_configs::side_bar();
+            ?>
 
             <!-- Main Content -->
             <main class="col-md-10 ms-sm-auto px-md-4 py-4" id="">
@@ -118,7 +124,7 @@ admin_configs::header();
                     </div>
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
                         <!--Total orders from DB-->
-                        
+
                         <a href="orders.php" class="text-decoration-none text-dark">
                             <div class="card text-center p-3 shadow-sm border-0 rounded-3 h-100">
                                 <h6>Total Orders</h6>
@@ -154,46 +160,50 @@ admin_configs::header();
                 <div class="mt-5" data-aos="fade-up">
                     <h4 class="mb-4 fw-bold">Latest Orders</h4>
                     <div class="row g-4">
-                        <?php 
+                        <?php
                         $result = page_configs::fetch_orders($connection);
                         // var_dump($latest);
-                        if(mysqli_num_rows($result) > 0){
-                            while ($row = mysqli_fetch_assoc($result)){
+                        if (mysqli_num_rows($result) > 0) {
+                            while ($row = mysqli_fetch_assoc($result)) {
                                 ?>
                                 <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
-                                        <a href="view_order.php?id=<?php echo $row['order_id']; ?>" class="text-decoration-none text-dark">
-                                            <div class="card shadow-sm border-0 rounded-4 h-100">
-                                                <div class="card-body">
-                                                    <h5 class="card-title fw-bold">Order #<?php echo $row['order_id'] ?? "" ?></h5>
-                                                    <p class="mb-1"><strong>Customer:</strong> <?php echo $row['first_name'] . " " . $row['last_name'] ?? "" ?></p>
-                                                    <p class="mb-1"><strong>Status:</strong>
-                                                        <span class="badge bg-success"><?php echo $row['order_Status'] ?? "" ?></span>
-                                                    </p>
-                                                    <p class="mb-1"><strong>Total:</strong> $<?php echo $row['total_ammount'] ?? "" ?></p>
-                                                    <p class="mb-1"><strong>Date:</strong> <?php echo $row['placed_at'] ?? "" ?></p>
-                                                </div>
+                                    <a href="view_order.php?id=<?php echo $row['order_id']; ?>"
+                                        class="text-decoration-none text-dark">
+                                        <div class="card shadow-sm border-0 rounded-4 h-100">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">Order #<?php echo $row['order_id'] ?? "" ?></h5>
+                                                <p class="mb-1"><strong>Customer:</strong>
+                                                    <?php echo $row['first_name'] . " " . $row['last_name'] ?? "" ?></p>
+                                                <p class="mb-1"><strong>Status:</strong>
+                                                    <span
+                                                        class="badge bg-<?php echo ($row['order_Status'] == 'Completed') ? 'success' : 'danger'; ?>"><?php echo $row['order_Status'] ?? "" ?></span>
+                                                </p>
+                                                <p class="mb-1"><strong>Total:</strong>
+                                                    $<?php echo $row['total_ammount'] ?? "" ?></p>
+                                                <p class="mb-1"><strong>Date:</strong> <?php echo $row['placed_at'] ?? "" ?></p>
                                             </div>
-                                        </a>
-                                    </div>
-                                    <?php
+                                        </div>
+                                    </a>
+                                </div>
+                                <?php
 
                             }
-                        }else{
+                        } else {
                             echo "<p>No recent orders found.</p>";
                         }
                         ?>
                         <!-- Order Card -->
-                        
+
 
                     </div>
                 </div>
 
 
             </main>
-            
+
         </div>
     </div>
 
 
 
-  <?php admin_configs::footer(); ?>
+    <?php admin_configs::footer(); ?>

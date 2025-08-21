@@ -28,35 +28,30 @@ $total = 0;
       <!-- Cart Items -->
       <div class="col-lg-8">
         <div class="list-group">
-          <?php if(!empty($cart_items)): ?>
-            <?php foreach($cart_items as $product_id => $item_json): ?>
+          <?php if (!empty($cart_items)): ?>
+            <?php foreach ($cart_items as $product_id => $item_json): ?>
               <?php
-                $item = json_decode($item_json, true);
-                $subtotal = $item['quantity'] * $item['price'];
-                $total += $subtotal;
-                $max_stock = isset($item['stock']) ? (int)$item['stock'] : $item['quantity']; // fallback
+              $item = json_decode($item_json, true);
+              $subtotal = $item['quantity'] * $item['price'];
+              $total += $subtotal;
+              $max_stock = isset($item['stock']) ? (int) $item['stock'] : $item['quantity']; // fallback
               ?>
               <div class="list-group-item d-flex align-items-center py-3">
-                <img src="uploads/<?php echo htmlspecialchars($item['image']); ?>" 
-                     alt="<?php echo htmlspecialchars($item['product_name']); ?>" 
-                     class="img-thumbnail me-3" 
-                     style="width: 100px; height: 100px; object-fit: cover;">
-                
+                <img src="uploads/<?php echo htmlspecialchars($item['image']); ?>"
+                  alt="<?php echo htmlspecialchars($item['product_name']); ?>" class="img-thumbnail me-3"
+                  style="width: 100px; height: 100px; object-fit: cover;">
+
                 <div class="flex-grow-1">
                   <h5 class="mb-1"><?php echo htmlspecialchars($item['product_name']); ?></h5>
                   <p class="mb-1 text-muted">$<?php echo number_format($item['price'], 2); ?> each</p>
-                  
+
                   <div class="d-flex align-items-center gap-3">
                     <label class="form-label mb-0">Qty:</label>
-                    <input type="number" 
-                           class="form-control form-control-sm quantity-input" 
-                           data-product-id="<?php echo $product_id; ?>" 
-                           value="<?php echo $item['quantity']; ?>" 
-                           min="1" 
-                           max="<?php echo $max_stock; ?>" 
-                           style="width: 70px;">
-                    <a href="remove_cart.php?user_id=<?php echo $user_id; ?>&product_id=<?php echo $product_id; ?>&action=remove" 
-                       class="btn btn-outline-danger btn-sm ms-auto">
+                    <input type="number" class="form-control form-control-sm quantity-input"
+                      data-product-id="<?php echo $product_id; ?>" value="<?php echo $item['quantity']; ?>" min="1"
+                      max="<?php echo $max_stock; ?>" style="width: 70px;">
+                    <a href="remove_cart.php?user_id=<?php echo $user_id; ?>&product_id=<?php echo $product_id; ?>&action=remove"
+                      class="btn btn-outline-danger btn-sm ms-auto">
                       Remove
                     </a>
                   </div>
@@ -71,7 +66,7 @@ $total = 0;
           <?php endif; ?>
         </div>
       </div>
-      
+
       <!-- Cart Summary -->
       <div class="col-lg-4">
         <div class="card shadow-sm">
@@ -91,7 +86,8 @@ $total = 0;
                 <span>$<?php echo number_format($total + 15, 2); ?></span>
               </li>
             </ul>
-            <a href="checkout.php?user_id=<?php echo $user_id; ?>" class="btn btn-primary w-100 mb-2">Proceed to Checkout</a>
+            <a href="checkout.php?user_id=<?php echo $user_id; ?>" class="btn btn-primary w-100 mb-2">Proceed to
+              Checkout</a>
             <a href="shop.php" class="btn btn-outline-secondary w-100">Continue Shopping</a>
           </div>
         </div>
@@ -101,17 +97,17 @@ $total = 0;
 </section>
 
 <script>
-// Prevent user from entering quantity more than stock
-document.querySelectorAll('.quantity-input').forEach(input => {
-  input.addEventListener('input', function() {
-    const max = parseInt(this.max);
-    const val = parseInt(this.value);
-    if (val > max) {
-      this.value = max;
-      alert("You cannot add more than available stock (" + max + ").");
-    }
+  // Prevent user from entering quantity more than stock
+  document.querySelectorAll('.quantity-input').forEach(input => {
+    input.addEventListener('input', function () {
+      const max = parseInt(this.max);
+      const val = parseInt(this.value);
+      if (val > max) {
+        this.value = max;
+        alert("You cannot add more than available stock (" + max + ").");
+      }
+    });
   });
-});
 </script>
 
 <?php WebConfig::footer(); ?>

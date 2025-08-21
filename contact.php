@@ -60,7 +60,7 @@ WebConfig::navbar();
       
       <div class="col-md-4">
         <h5 class="mb-3">Email & Social</h5>
-        <p>Email: <a href="mailto:info@yourdomain.com" class="text-decoration-none">info@yourdomain.com</a></p>
+        <p>Email: <a href="mailto:info@yourdomain.com" class="text-decoration-none">abdulazeezbhutto085@gmail.com</a></p>
         <div class="d-flex justify-content-center justify-content-md-start gap-3 mt-2">
           <a href="#" class="text-primary fs-4"><i class="bi bi-facebook"></i></a>
           <a href="#" class="text-info fs-4"><i class="bi bi-twitter"></i></a>

@@ -4,9 +4,12 @@
 
     class orders{
         public static function getorderbyid($id , $connection){
-            $query = "SELECT * FROM orders WHERE order_id = $id";
+            $query = "SELECT o.*, oi.* 
+                        FROM orders o
+                        INNER JOIN order_items oi ON o.order_id = oi.order_id
+                        WHERE o.order_id = $id;";
             $result = mysqli_query($connection->connection, $query);
-            return mysqli_fetch_assoc($result);
+            return $result;
         }
     }
 

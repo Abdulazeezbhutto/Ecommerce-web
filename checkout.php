@@ -18,35 +18,35 @@ $shipping = !empty($cart_items) ? 15 : 0;
       <!-- Billing Details Form -->
       <div class="col-lg-7">
         <h5 class="mb-3">Billing Details</h5>
-        <form method="post" action="checkout_process.php">
+        <form method="post" action="checkout_process.php" id="payment-form">
           <div class="row g-3">
             <div class="col-md-6">
-              <label for="firstName" class="form-label">First Name</label>
-              <input type="text" class="form-control" id="firstName" name="first_name" placeholder="John" required>
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-control" name="first_name" required>
             </div>
             <div class="col-md-6">
-              <label for="lastName" class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="lastName" name="last_name" placeholder="Doe" required>
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-control" name="last_name" required>
             </div>
             <div class="col-12">
-              <label for="email" class="form-label">Email Address</label>
-              <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required>
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-control" name="email" required>
             </div>
             <div class="col-12">
-              <label for="address" class="form-label">Address</label>
-              <input type="text" class="form-control" id="address" name="address" placeholder="1234 Main St" required>
+              <label class="form-label">Address</label>
+              <input type="text" class="form-control" name="address" required>
             </div>
             <div class="col-md-6">
-              <label for="city" class="form-label">City</label>
-              <input type="text" class="form-control" id="city" name="city" required>
+              <label class="form-label">City</label>
+              <input type="text" class="form-control" name="city" required>
             </div>
             <div class="col-md-4">
-              <label for="state" class="form-label">State/Province</label>
-              <input type="text" class="form-control" id="state" name="state" required>
+              <label class="form-label">State/Province</label>
+              <input type="text" class="form-control" name="state" required>
             </div>
             <div class="col-md-2">
-              <label for="zip" class="form-label">Zip</label>
-              <input type="text" class="form-control" id="zip" name="zip" required>
+              <label class="form-label">Zip</label>
+              <input type="text" class="form-control" name="zip" required>
             </div>
           </div>
       </div>
@@ -86,28 +86,89 @@ $shipping = !empty($cart_items) ? 15 : 0;
               </li>
             </ul>
 
-            <h5 class="card-title mb-3">Payment Method</h5>
-            <div class="mb-2">
-              <input class="form-check-input" type="radio" name="payment_method" id="creditCard" value="Credit Card" checked>
-              <label class="form-check-label" for="creditCard">Credit Card</label>
-            </div>
-            <div class="mb-2">
-              <input class="form-check-input" type="radio" name="payment_method" id="paypal" value="PayPal">
-              <label class="form-check-label" for="paypal">PayPal</label>
-            </div>
-            <div class="mb-2">
-              <input class="form-check-input" type="radio" name="payment_method" id="bankTransfer" value="Bank Transfer">
-              <label class="form-check-label" for="bankTransfer">Bank Transfer</label>
-            </div>
 
-            <button type="submit" class="btn btn-primary w-100 mt-3">Place Order</button>
+            <!-- Payment Buttons -->
+            <h5 class="card-title mb-3">Payment Method</h5>
+            <br><hr/><br>
+
+            <input type="hidden" name="total_amount" value="<?php echo $subtotal + $shipping; ?>">
+
+            <!-- COD Button -->
+            <button type="submit" name="cod_submit" class="btn btn-primary w-100 mt-3">Place Order (COD)</button>
+
+            <!-- Stripe Button -->
+            <button type="button" class="btn btn-success w-100 mt-2" id="stripeBtn">Place Order (Stripe)</button>
+
+            </form>
+
+
+            </form>
           </div>
         </div>
-      </div>
+</section>
 
-      </form>
+
+<!-- Stripe Modal -->
+<div class="modal fade" id="stripeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-3 shadow">
+      <div class="modal-header">
+        <h5 class="modal-title">Complete Payment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Enter your card details to pay <strong>$<?php echo number_format($subtotal + $shipping, 2); ?></strong></p>
+        
+        <form id="stripe-form" action="checkout_process.php" method="POST">
+          <div id="card-element" class="form-control"></div>
+          <div id="card-errors" class="text-danger mt-2"></div>
+          <input type="hidden" name="payment_method" value="stripe">
+          <input type="hidden" name="total_amount" value="<?php echo $subtotal + $shipping; ?>">
+          <button type="submit" class="btn btn-success w-100 mt-3">Pay Now</button>
+        </form>
+      </div>
     </div>
   </div>
-</section>
+</div>
+
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  let stripe = Stripe("pk_test_51RyUHVCaHnfHJUzWrj3TBEfLWTVdQJUOBJNJZzbViBGcnj30Q2ioYzirwBOwE2BBOVuhAJI4LjC6IUmW47tOrlrt00rRRpHLhi");
+  let elements = stripe.elements();
+  let card = elements.create("card");
+  card.mount("#card-element");
+
+  // Stripe Modal Open
+  document.getElementById("stripeBtn").addEventListener("click", function() {
+    let modal = new bootstrap.Modal(document.getElementById("stripeModal"));
+    modal.show();
+  });
+
+  // Handle Stripe Form Submission
+  let form = document.getElementById("stripe-form");
+  form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const {paymentMethod, error} = await stripe.createPaymentMethod({
+      type: "card",
+      card: card,
+    });
+
+    if (error) {
+      document.getElementById("card-errors").textContent = error.message;
+    } else {
+      // Insert Stripe Payment ID into hidden field
+      let hiddenInput = document.createElement("input");
+      hiddenInput.type = "hidden";
+      hiddenInput.name = "stripe_payment_id";
+      hiddenInput.value = paymentMethod.id;
+      form.appendChild(hiddenInput);
+
+      // Submit form to checkout_process.php
+      form.submit();
+    }
+  });
+</script>
 
 <?php WebConfig::footer(); ?>

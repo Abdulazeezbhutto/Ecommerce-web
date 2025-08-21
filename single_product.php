@@ -14,7 +14,8 @@ $product = products_oper::fetch_product_by_id($_REQUEST['productid'] ?? 0);
   <div class="container">
     <div class="row gy-4">
       
-        <p id="result"></p>
+        
+         <div class="container mt-3" id="result"></div>
 
       <!-- Product Images -->
       <div class="col-md-6">
