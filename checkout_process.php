@@ -99,40 +99,56 @@ if (isset($_POST['cod_submit'])) {
 }
 
 // Stripe Payment
+
 elseif (isset($_POST['stripe_payment_id'])) {
-    \Stripe\Stripe::setApiKey(""); // Insert here stripe's secret key
+    require_once 'vendor/autoload.php'; 
+
+    $secretKey = "sk_test_51RyUHVCaHnfHJUzWct6NlWfyeY3Pt37Qy5cCkUOBpbohSs5fUI6YNctzDx3KZ5tnpcMc6wFZl7RZLhW5ERkt1KLL00pP832CEg";
+    \Stripe\Stripe::setApiKey($secretKey); 
 
     try {
-        
+        // amount must be an integer (cents)
+        $amountInCents = (int) round($total_amount * 100);
+
         $paymentIntent = \Stripe\PaymentIntent::create([
-            "amount" => $total_amount * 100, 
+            "amount" => $amountInCents,
             "currency" => "usd",
             "payment_method" => $_POST['stripe_payment_id'],
-            "payment_method_types" => ["card"], 
-            "confirmation_method" => "manual",
-            "confirm" => true,
+            "confirm" => true, 
             "description" => "Order Payment by User ID: $user_id",
         ]);
 
         if ($paymentIntent->status === "succeeded") {
-            $order_id = saveOrder($connection, $user_id, $total_amount, $shipping_address, "Stripe", $_COOKIE['cart'][$user_id]);
+            $cartData = isset($_COOKIE['cart'][$user_id]) ? $_COOKIE['cart'][$user_id] : [];
+
+            $order_id = saveOrder(
+                $connection,
+                $user_id,
+                $total_amount,
+                $shipping_address ?? '', 
+                "Stripe",
+                $cartData
+            );
+
             if ($order_id) {
-                header("Location: cart.php?msg=Payment successful. Order placed!");
+                header("Location: cart.php?msg=" . urlencode("Payment successful. Order placed!"));
+                exit;
+            } else {
+                header("Location: cart.php?msg=" . urlencode("Order save failed after payment."));
                 exit;
             }
         } else {
-            header("Location: cart.php?msg=Payment status: " . $paymentIntent->status);
+            header("Location: cart.php?msg=" . urlencode("Payment status: " . $paymentIntent->status));
             exit;
         }
 
     } catch (\Stripe\Exception\CardException $e) {
-        header("Location: cart.php?msg=Stripe Error: " . $e->getMessage());
+        header("Location: cart.php?msg=" . urlencode("Stripe Error: " . $e->getMessage()));
         exit;
     } catch (\Exception $e) {
-        header("Location: cart.php?msg=Error: " . $e->getMessage());
+        header("Location: cart.php?msg=" . urlencode("Error: " . $e->getMessage()));
         exit;
     }
 }
-
 
 ?>

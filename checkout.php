@@ -86,10 +86,9 @@ $shipping = !empty($cart_items) ? 15 : 0;
               </li>
             </ul>
 
-
             <!-- Payment Buttons -->
             <h5 class="card-title mb-3">Payment Method</h5>
-            <br><hr/><br>
+            <hr/>
 
             <input type="hidden" name="total_amount" value="<?php echo $subtotal + $shipping; ?>">
 
@@ -99,13 +98,13 @@ $shipping = !empty($cart_items) ? 15 : 0;
             <!-- Stripe Button -->
             <button type="button" class="btn btn-success w-100 mt-2" id="stripeBtn">Place Order (Stripe)</button>
 
-            </form>
-
-
-            </form>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
 </section>
+</form> <!-- ✅ close the billing form only once -->
 
 
 <!-- Stripe Modal -->
@@ -134,7 +133,9 @@ $shipping = !empty($cart_items) ? 15 : 0;
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  let stripe = Stripe("");
+  // Use Publishable key, not Secret key
+  var stripekey = "sk_test_51RyUHVCaHnfHJUzWct6NlWfyeY3Pt37Qy5cCkUOBpbohSs5fUI6YNctzDx3KZ5tnpcMc6wFZl7RZLhW5ERkt1KLL00pP832CEg";
+  let stripe = Stripe(stripekey); 
   let elements = stripe.elements();
   let card = elements.create("card");
   card.mount("#card-element");
