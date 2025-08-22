@@ -15,10 +15,12 @@ $shipping = !empty($cart_items) ? 15 : 0;
     <h2 class="mb-4">Checkout</h2>
     <div class="row g-4">
 
-      <!-- Billing Details Form -->
-      <div class="col-lg-7">
-        <h5 class="mb-3">Billing Details</h5>
-        <form method="post" action="checkout_process.php" id="payment-form">
+      <!-- Checkout Form -->
+      <form method="post" action="checkout_process.php" id="payment-form" class="row g-4">
+
+        <!-- Billing Details -->
+        <div class="col-lg-7">
+          <h5 class="mb-3">Billing Details</h5>
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">First Name</label>
@@ -49,125 +51,109 @@ $shipping = !empty($cart_items) ? 15 : 0;
               <input type="text" class="form-control" name="zip" required>
             </div>
           </div>
-      </div>
+        </div>
 
-      <!-- Order Summary & Payment -->
-      <div class="col-lg-5">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title mb-3">Order Summary</h5>
-            <ul class="list-group mb-3">
-              <?php if (!empty($cart_items)): ?>
-                <?php foreach ($cart_items as $product_id => $item_json):
-                  $item = json_decode($item_json, true);
-                  $item_total = $item['quantity'] * $item['price'];
-                  $subtotal += $item_total;
-                  ?>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span><?php echo htmlspecialchars($item['product_name']); ?> (x<?php echo $item['quantity']; ?>)</span>
-                    <strong>$<?php echo number_format($item_total, 2); ?></strong>
-                  </li>
-                <?php endforeach; ?>
-              <?php else: ?>
-                <li class="list-group-item">Your cart is empty.</li>
-              <?php endif; ?>
+        <!-- Order Summary -->
+        <div class="col-lg-5">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Order Summary</h5>
+              <ul class="list-group mb-3">
+                <?php if (!empty($cart_items)): ?>
+                  <?php foreach ($cart_items as $product_id => $item_json):
+                    $item = json_decode($item_json, true);
+                    $item_total = $item['quantity'] * $item['price'];
+                    $subtotal += $item_total;
+                    ?>
+                    <li class="list-group-item d-flex justify-content-between">
+                      <span><?php echo htmlspecialchars($item['product_name']); ?> (x<?php echo $item['quantity']; ?>)</span>
+                      <strong>$<?php echo number_format($item_total, 2); ?></strong>
+                    </li>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <li class="list-group-item">Your cart is empty.</li>
+                <?php endif; ?>
 
-              <li class="list-group-item d-flex justify-content-between">
-                <span>Subtotal</span>
-                <strong>$<?php echo number_format($subtotal, 2); ?></strong>
-              </li>
-              <li class="list-group-item d-flex justify-content-between">
-                <span>Shipping</span>
-                <strong>$<?php echo number_format($shipping, 2); ?></strong>
-              </li>
-              <li class="list-group-item d-flex justify-content-between fw-bold">
-                <span>Total</span>
-                <strong>$<?php echo number_format($subtotal + $shipping, 2); ?></strong>
-              </li>
-            </ul>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Subtotal</span>
+                  <strong>$<?php echo number_format($subtotal, 2); ?></strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Shipping</span>
+                  <strong>$<?php echo number_format($shipping, 2); ?></strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between fw-bold">
+                  <span>Total</span>
+                  <strong>$<?php echo number_format($subtotal + $shipping, 2); ?></strong>
+                </li>
+              </ul>
 
-            <!-- Payment Buttons -->
-            <h5 class="card-title mb-3">Payment Method</h5>
-            <hr/>
+              <!-- Hidden Total -->
+              <input type="hidden" name="total_amount" value="<?php echo $subtotal + $shipping; ?>">
 
-            <input type="hidden" name="total_amount" value="<?php echo $subtotal + $shipping; ?>">
+              <!-- Payment Options -->
+              <h5 class="card-title mb-3">Payment Method</h5>
+              <hr/>
 
-            <!-- COD Button -->
-            <button type="submit" name="cod_submit" class="btn btn-primary w-100 mt-3">Place Order (COD)</button>
+              <!-- COD -->
+              <button type="submit" name="cod_submit" class="btn btn-primary w-100 mt-3">
+                Place Order (COD)
+              </button>
 
-            <!-- Stripe Button -->
-            <button type="button" class="btn btn-success w-100 mt-2" id="stripeBtn">Place Order (Stripe)</button>
+              <!-- Stripe -->
+              <div id="card-element" class="form-control p-3 my-3"></div>
+              <div id="card-errors" class="text-danger small mb-2"></div>
+              <button type="submit" id="stripeBtn" class="btn btn-success w-100">
+                Pay with Stripe
+              </button>
 
+              <!-- Stripe hidden field -->
+              <input type="hidden" name="stripe_payment_id" id="stripe_payment_id">
+              <input type="hidden" name="payment_method" value="stripe">
+            </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </section>
-</form> <!-- ✅ close the billing form only once -->
 
-
-<!-- Stripe Modal -->
-<div class="modal fade" id="stripeModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-3 shadow">
-      <div class="modal-header">
-        <h5 class="modal-title">Complete Payment</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p>Enter your card details to pay <strong>$<?php echo number_format($subtotal + $shipping, 2); ?></strong></p>
-        
-        <form id="stripe-form" action="checkout_process.php" method="POST">
-          <div id="card-element" class="form-control"></div>
-          <div id="card-errors" class="text-danger mt-2"></div>
-          <input type="hidden" name="payment_method" value="stripe">
-          <input type="hidden" name="total_amount" value="<?php echo $subtotal + $shipping; ?>">
-          <button type="submit" class="btn btn-success w-100 mt-3">Pay Now</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-
+<!-- Stripe JS -->
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  // Use Publishable key, not Secret key
-  var stripekey = "sk_test_51RyUHVCaHnfHJUzWct6NlWfyeY3Pt37Qy5cCkUOBpbohSs5fUI6YNctzDx3KZ5tnpcMc6wFZl7RZLhW5ERkt1KLL00pP832CEg";
+  var stripekey = "pk_test_51RyUHVCaHnfHJUzWrj3TBEfLWTVdQJUOBJNJZzbViBGcnj30Q2ioYzirwBOwE2BBOVuhAJI4LjC6IUmW47tOrlrt00rRRpHLhi";
   let stripe = Stripe(stripekey); 
   let elements = stripe.elements();
   let card = elements.create("card");
   card.mount("#card-element");
 
-  // Stripe Modal Open
-  document.getElementById("stripeBtn").addEventListener("click", function() {
-    let modal = new bootstrap.Modal(document.getElementById("stripeModal"));
-    modal.show();
-  });
-
-  // Handle Stripe Form Submission
-  let form = document.getElementById("stripe-form");
+  let form = document.getElementById("payment-form");
   form.addEventListener("submit", async function(event) {
-    event.preventDefault();
+    if (event.submitter && event.submitter.id === "stripeBtn") {
+      event.preventDefault();
 
-    const {paymentMethod, error} = await stripe.createPaymentMethod({
-      type: "card",
-      card: card,
-    });
+      const {paymentMethod, error} = await stripe.createPaymentMethod({
+        type: "card",
+        card: card,
+        billing_details: {
+          name: document.querySelector("input[name=first_name]").value + " " + 
+                document.querySelector("input[name=last_name]").value,
+          email: document.querySelector("input[name=email]").value,
+          address: {
+            line1: document.querySelector("input[name=address]").value,
+            city: document.querySelector("input[name=city]").value,
+            state: document.querySelector("input[name=state]").value,
+            postal_code: document.querySelector("input[name=zip]").value,
+          }
+        }
+      });
 
-    if (error) {
-      document.getElementById("card-errors").textContent = error.message;
-    } else {
-      // Insert Stripe Payment ID into hidden field
-      let hiddenInput = document.createElement("input");
-      hiddenInput.type = "hidden";
-      hiddenInput.name = "stripe_payment_id";
-      hiddenInput.value = paymentMethod.id;
-      form.appendChild(hiddenInput);
-
-      // Submit form to checkout_process.php
-      form.submit();
+      if (error) {
+        document.getElementById("card-errors").textContent = error.message;
+      } else {
+        document.getElementById("stripe_payment_id").value = paymentMethod.id;
+        form.submit();
+      }
     }
   });
 </script>
