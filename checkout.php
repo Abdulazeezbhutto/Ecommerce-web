@@ -134,7 +134,7 @@ $shipping = !empty($cart_items) ? 15 : 0;
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  let stripe = Stripe("pk_test_51RyUHVCaHnfHJUzWrj3TBEfLWTVdQJUOBJNJZzbViBGcnj30Q2ioYzirwBOwE2BBOVuhAJI4LjC6IUmW47tOrlrt00rRRpHLhi");
+  let stripe = Stripe("");
   let elements = stripe.elements();
   let card = elements.create("card");
   card.mount("#card-element");
