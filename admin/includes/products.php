@@ -1,23 +1,26 @@
 <?php
 require("../../require/database_connection.php");
 
-class Products {
+class Products
+{
 
-    public static function add_product($product_name, $description, $price, $stock_quantity, $category_id, $product_image, $connection) {
+    public static function add_product($product_name, $description, $price, $stock_quantity, $category_id, $product_image, $connection)
+    {
         // Escape values to prevent SQL injection
-        $product_name   = mysqli_real_escape_string($connection->connection, $product_name);
-        $description    = mysqli_real_escape_string($connection->connection, $description);
-        $price          = mysqli_real_escape_string($connection->connection, $price);
+        $product_name = mysqli_real_escape_string($connection->connection, $product_name);
+        $description = mysqli_real_escape_string($connection->connection, $description);
+        $price = mysqli_real_escape_string($connection->connection, $price);
         $stock_quantity = mysqli_real_escape_string($connection->connection, $stock_quantity);
-        $category_id    = mysqli_real_escape_string($connection->connection, $category_id);
-        $product_image  = mysqli_real_escape_string($connection->connection, $product_image);
+        $category_id = mysqli_real_escape_string($connection->connection, $category_id);
+        $product_image = mysqli_real_escape_string($connection->connection, $product_image);
 
         $query = "INSERT INTO products (product_name, description, price, stock_quamtitiy, category_id, image_path) 
                   VALUES ('$product_name', '$description', '$price', '$stock_quantity', '$category_id', '$product_image')";
         return mysqli_query($connection->connection, $query) ? true : false;
     }
 
-    public static function upload_image($file) {
+    public static function upload_image($file)
+    {
         $target_dir = "../../uploads/";
 
         // Create folder if it doesn't exist
@@ -45,28 +48,31 @@ class Products {
         return false;
     }
 
-    public static function delete_product($product_id, $connection) {
-        $product_id = (int)$product_id; // Ensure integer
+    public static function delete_product($product_id, $connection)
+    {
+        $product_id = (int) $product_id; // Ensure integer
         $query = "DELETE FROM products WHERE product_id = '$product_id'";
         return mysqli_query($connection->connection, $query) ? true : false;
     }
 
-   public static function delete_category($id, $connection) {
-    
-    $id = intval($id);
+    public static function delete_category($id, $connection)
+    {
 
-    $query = "DELETE FROM categories WHERE category_id = '$id'";
-    $result = mysqli_query($connection->connection, $query);
+        $id = intval($id);
 
-    if ($result) {
-        return true;
-    } else {
-        return false;
+        $query = "DELETE FROM categories WHERE category_id = '$id'";
+        $result = mysqli_query($connection->connection, $query);
+
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    }
 
 
-    public static function get_category($id, $connection){
+    public static function get_category($id, $connection)
+    {
         $query = "SELECT * from categories WHERE category_id = '$id'";
         $result = mysqli_query($connection->connection, $query);
         if ($result) {
@@ -77,7 +83,8 @@ class Products {
         }
     }
 
-    public static function update_category($category_id,$category_name,$connection){
+    public static function update_category($category_id, $category_name, $connection)
+    {
 
         $query = "UPDATE categories SET category_name = '$category_name' WHERE category_id = '$category_id'";
         $result = mysqli_query($connection->connection, $query);
@@ -114,9 +121,7 @@ elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == "delete_product") {
     $result = $delete_product->delete_product($_REQUEST['id'], $connection);
     echo $result ? "<p>Product deleted successfully.</p>" : "<p>Failed to delete product.</p>";
     exit;
-}
-
-elseif(isset($_REQUEST["submit"]) && $_REQUEST['submit'] === "add_category"){
+} elseif (isset($_REQUEST["submit"]) && $_REQUEST['submit'] === "add_category") {
     // Handle adding a new category
     $category_name = mysqli_real_escape_string($connection->connection, $_REQUEST['category_name']);
     $query = "INSERT INTO categories (category_name) VALUES ('$category_name')";
@@ -127,44 +132,38 @@ elseif(isset($_REQUEST["submit"]) && $_REQUEST['submit'] === "add_category"){
     } else {
         header("Location: ../category.php?msg=Failed to add category.");
     }
-}
-
-elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "delete_category"){
+} elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == "delete_category") {
     $id = $_REQUEST['id'];
 
     $category = new products();
     $category->delete_category($id, $connection);
-    if($category){
+    if ($category) {
         echo "<p>Category Deleted Successfully</p>";
-    }else{
+    } else {
         echo "<p>Category Can Not be deleted </p>";
 
     }
 
-}
+} elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == "get_category") {
+    $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : "";
 
-elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "get_category"){
-        $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : "";
+    if ($id) {
+        $category = new products();
+        $row = $category->get_category($id, $connection);
 
-        if ($id) {
-            $category = new products();
-            $row = $category->get_category($id, $connection);
-
-            if ($row && is_array($row)) {
-                echo json_encode([
-                    "category_id"   => $row['category_id'],
-                    "category_name" => $row['category_name']
-                ]);
-            } else {
-                echo json_encode(false);
-            }
+        if ($row && is_array($row)) {
+            echo json_encode([
+                "category_id" => $row['category_id'],
+                "category_name" => $row['category_name']
+            ]);
         } else {
             echo json_encode(false);
         }
+    } else {
+        echo json_encode(false);
+    }
 
-}
-
-elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "update_category"){
+} elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == "update_category") {
     $id = $_REQUEST['id'];
     $category_name = $_REQUEST['category_name'];
 

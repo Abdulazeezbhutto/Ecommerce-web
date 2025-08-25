@@ -114,89 +114,121 @@ admin_configs::header();
 
                 <!-- Stats Cards -->
                 <div class="row g-4">
+                    <!-- Total Sales -->
                     <div class="col-md-3" data-aos="fade-up">
-                        <!--Total sales from DB-->
-                        <div class="card text-center p-3">
-                            <h6>Total Sales</h6>
-                            <h3><?php echo page_configs::get_total_sales($connection); ?></h3>
+                        <div
+                            class="card bg-gradient bg-success text-white border-0 shadow-lg rounded-4 text-center p-4 h-100">
+                            <h6 class="text-uppercase fw-bold">Total Sales</h6>
+                            <h3 class="fw-bold"><?php echo page_configs::get_total_sales($connection); ?></h3>
                         </div>
-                        <!--Total sales from DB-->
                     </div>
+
+                    <!-- Total Orders -->
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
-                        <!--Total orders from DB-->
-
-                        <a href="orders.php" class="text-decoration-none text-dark">
-                            <div class="card text-center p-3 shadow-sm border-0 rounded-3 h-100">
-                                <h6>Total Orders</h6>
-                                <h3><?php echo page_configs::get_total_orders($connection); ?></h3>
+                        <a href="orders.php" class="text-decoration-none">
+                            <div
+                                class="card bg-gradient bg-primary text-white border-0 shadow-lg rounded-4 text-center p-4 h-100">
+                                <h6 class="text-uppercase fw-bold">Total Orders</h6>
+                                <h3 class="fw-bold"><?php echo page_configs::get_total_orders($connection); ?></h3>
                             </div>
                         </a>
-
-                        <!--Total orders from DB-->
                     </div>
+
+                    <!-- Customers -->
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
-                        <!--Total customers from DB-->
-                        <div class="card text-center p-3">
-                            <h6>Customers</h6>
-                            <h3><?php echo page_configs::get_total_customers($connection); ?></h3>
+                        <a href="users.php">
+                            <div
+                            class="card bg-gradient bg-warning text-dark border-0 shadow-lg rounded-4 text-center p-4 h-100">
+                            <h6 class="text-uppercase fw-bold">Customers</h6>
+                            <h3 class="fw-bold"><?php echo page_configs::get_total_customers($connection); ?></h3>
                         </div>
-                        <!--Total cutomers from DB-->
-
+                        </a>
                     </div>
+
+                    <!-- Products -->
                     <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
-                        <!--Total products from DB-->
-                        <a href="products.php" class="text-decoration-none text-dark">
-                            <div class="card text-center p-3 shadow-sm border-0 rounded-3 h-100">
-                                <h6>Products</h6>
-                                <h3><?php echo page_configs::get_total_products($connection); ?></h3>
+                        <a href="products.php" class="text-decoration-none">
+                            <div
+                                class="card bg-gradient bg-danger text-white border-0 shadow-lg rounded-4 text-center p-4 h-100">
+                                <h6 class="text-uppercase fw-bold">Products</h6>
+                                <h3 class="fw-bold"><?php echo page_configs::get_total_products($connection); ?></h3>
                             </div>
                         </a>
-
-                        <!--Total orders from DB-->
                     </div>
                 </div>
 
+                <div class="mt-5" data-aos="fade-up">
+                    <div class="row g-4">
+                        <!-- Best Sellers -->
+                        <div class="col-md-6">
+                            <a href="pdf/fpdf186/best_sellers.php" class="text-decoration-none">
+                                <div class="card bg-gradient bg-primary text-white border-0 shadow-lg rounded-4 h-100"
+                                    data-aos="zoom-in" data-aos-delay="100">
+                                    <div class="card-body text-center p-5">
+                                        <h6 class="text-uppercase fw-bold">Download Report</h6>
+                                        <h3 class="fw-bold">🚀 Top 10 Best Sellers</h3>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Trending Products -->
+                        <div class="col-md-6">
+                            <a href="pdf/fpdf186/trending_products.php" class="text-decoration-none">
+                                <div class="card bg-gradient bg-dark text-light border-0 shadow-lg rounded-4 h-100"
+                                    data-aos="zoom-in" data-aos-delay="200">
+                                    <div class="card-body text-center p-5">
+                                        <h6 class="text-uppercase fw-bold">Download Report</h6>
+                                        <h3 class="fw-bold">🔥 Top 10 Trending Products</h3>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>.
                 <!-- Latest Orders Table -->
                 <div class="mt-5" data-aos="fade-up">
                     <h4 class="mb-4 fw-bold">Latest Orders</h4>
                     <div class="row g-4">
                         <?php
                         $result = page_configs::fetch_orders($connection);
-                        // var_dump($latest);
-                        if (mysqli_num_rows($result) > 0) {
+                        if ($result && mysqli_num_rows($result) > 0) {
                             while ($row = mysqli_fetch_assoc($result)) {
                                 ?>
                                 <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
-                                    <a href="view_order.php?id=<?php echo $row['order_id']; ?>"
-                                        class="text-decoration-none text-dark">
-                                        <div class="card shadow-sm border-0 rounded-4 h-100">
-                                            <div class="card-body">
-                                                <h5 class="card-title fw-bold">Order #<?php echo $row['order_id'] ?? "" ?></h5>
+                                    <a href="view_order.php?id=<?php echo $row['order_id']; ?>" class="text-decoration-none">
+                                        <div class="card bg-gradient bg-light shadow-lg border-0 rounded-4 h-100">
+                                            <div class="card-body text-center p-4">
+                                                <h5 class="card-title fw-bold text-primary">Order
+                                                    #<?php echo $row['order_id'] ?? ""; ?></h5>
                                                 <p class="mb-1"><strong>Customer:</strong>
-                                                    <?php echo $row['first_name'] . " " . $row['last_name'] ?? "" ?></p>
+                                                    <?php echo ($row['first_name'] ?? "") . " " . ($row['last_name'] ?? ""); ?>
+                                                </p>
                                                 <p class="mb-1"><strong>Status:</strong>
                                                     <span
-                                                        class="badge bg-<?php echo ($row['order_Status'] == 'Completed') ? 'success' : 'danger'; ?>"><?php echo $row['order_Status'] ?? "" ?></span>
+                                                        class="badge bg-<?php echo ($row['order_Status'] == 'Completed') ? 'success' : 'warning'; ?>">
+                                                        <?php echo $row['order_Status'] ?? ""; ?>
+                                                    </span>
                                                 </p>
                                                 <p class="mb-1"><strong>Total:</strong>
-                                                    $<?php echo $row['total_ammount'] ?? "" ?></p>
-                                                <p class="mb-1"><strong>Date:</strong> <?php echo $row['placed_at'] ?? "" ?></p>
+                                                    <span
+                                                        class="fw-bold text-success">$<?php echo $row['total_ammount'] ?? ""; ?></span>
+                                                </p>
+                                                <p class="mb-1"><strong>Date:</strong> <?php echo $row['placed_at'] ?? ""; ?>
+                                                </p>
                                             </div>
                                         </div>
                                     </a>
                                 </div>
                                 <?php
-
                             }
                         } else {
-                            echo "<p>No recent orders found.</p>";
+                            echo "<p class='text-muted'>No recent orders found.</p>";
                         }
                         ?>
-                        <!-- Order Card -->
-
-
                     </div>
                 </div>
+
 
 
             </main>

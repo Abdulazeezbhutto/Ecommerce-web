@@ -55,7 +55,7 @@ $total = 0;
                       Remove
                     </a>
                   </div>
-                  <small class="text-muted">Available Stock: <?php echo $max_stock; ?></small>
+                  <small class="text-muted">Selected Items: <?php echo $max_stock; ?></small>
                 </div>
 
                 <div class="fw-bold ms-4">$<?php echo number_format($subtotal, 2); ?></div>

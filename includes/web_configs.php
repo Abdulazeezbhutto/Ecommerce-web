@@ -177,26 +177,36 @@ class WebConfig
                         <!-- Categories Section (Dynamic from DB) -->
                         <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
                             <h6 class="text-uppercase fw-bold mb-4">Products</h6>
-                            <?php
-                            global $categories;
-                            if (!empty($categories)) {
-                                foreach ($categories as $category) {
-                                    ?>
-                                    <p>
-                                        <a href="category.php?cat_id=<?php echo htmlspecialchars($category['category_id']); ?>"
-                                            class="text-light text-decoration-none">
-                                            <?php echo htmlspecialchars($category['category_name']); ?>
-                                        </a>
-                                    </p>
+
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle w-100" type="button" id="categoriesDropdown"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Select Category
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="categoriesDropdown">
                                     <?php
-                                }
-                            } else {
-                                ?>
-                                <p><span class="text-light">No categories found</span></p>
-                                <?php
-                            }
-                            ?>
+                                    global $categories;
+                                    if (!empty($categories)) {
+                                        foreach ($categories as $category) {
+                                            ?>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    href="category.php?cat_id=<?php echo htmlspecialchars($category['category_id']); ?>">
+                                                    <?php echo htmlspecialchars($category['category_name']); ?>
+                                                </a>
+                                            </li>
+                                            <?php
+                                        }
+                                    } else {
+                                        ?>
+                                        <li><span class="dropdown-item-text text-muted">No categories found</span></li>
+                                        <?php
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
                         </div>
+
 
                         <!-- Useful Links -->
                         <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">

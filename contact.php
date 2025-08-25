@@ -11,6 +11,14 @@ WebConfig::navbar();
 
 ?>
 
+<?php if (isset($_GET['msg']) && !empty($_GET['msg'])): ?>
+    <div class="container mt-3">
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($_GET['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+<?php endif; ?>
 
 <!-- Contact Form Section -->
 <section class="contact-form-section py-5">
@@ -21,7 +29,7 @@ WebConfig::navbar();
         <form method = "POST" action = "contact_process.php">
           <div class="mb-3">
             <label for="name" class="form-label">Full Name</label>
-            <input type="text" class="form-control" id="name" placeholder="Your full name" nsmr = "full_name" required>
+            <input type="text" class="form-control" id="name" placeholder="Your full name" name = "full_name" required>
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Email address</label>

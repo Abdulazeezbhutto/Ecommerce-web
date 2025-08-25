@@ -66,7 +66,8 @@ $shipping = !empty($cart_items) ? 15 : 0;
                     $subtotal += $item_total;
                     ?>
                     <li class="list-group-item d-flex justify-content-between">
-                      <span><?php echo htmlspecialchars($item['product_name']); ?> (x<?php echo $item['quantity']; ?>)</span>
+                      <span><?php echo htmlspecialchars($item['product_name']); ?>
+                        (x<?php echo $item['quantity']; ?>)</span>
                       <strong>$<?php echo number_format($item_total, 2); ?></strong>
                     </li>
                   <?php endforeach; ?>
@@ -93,7 +94,7 @@ $shipping = !empty($cart_items) ? 15 : 0;
 
               <!-- Payment Options -->
               <h5 class="card-title mb-3">Payment Method</h5>
-              <hr/>
+              <hr />
 
               <!-- COD -->
               <button type="submit" name="cod_submit" class="btn btn-primary w-100 mt-3">
@@ -122,22 +123,22 @@ $shipping = !empty($cart_items) ? 15 : 0;
 <script src="https://js.stripe.com/v3/"></script>
 <script>
   var stripekey = "pk_test_51RyUHVCaHnfHJUzWrj3TBEfLWTVdQJUOBJNJZzbViBGcnj30Q2ioYzirwBOwE2BBOVuhAJI4LjC6IUmW47tOrlrt00rRRpHLhi";
-  let stripe = Stripe(stripekey); 
+  let stripe = Stripe(stripekey);
   let elements = stripe.elements();
   let card = elements.create("card");
   card.mount("#card-element");
 
   let form = document.getElementById("payment-form");
-  form.addEventListener("submit", async function(event) {
+  form.addEventListener("submit", async function (event) {
     if (event.submitter && event.submitter.id === "stripeBtn") {
       event.preventDefault();
 
-      const {paymentMethod, error} = await stripe.createPaymentMethod({
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
         type: "card",
         card: card,
         billing_details: {
-          name: document.querySelector("input[name=first_name]").value + " " + 
-                document.querySelector("input[name=last_name]").value,
+          name: document.querySelector("input[name=first_name]").value + " " +
+            document.querySelector("input[name=last_name]").value,
           email: document.querySelector("input[name=email]").value,
           address: {
             line1: document.querySelector("input[name=address]").value,

@@ -3,7 +3,8 @@ session_start();
 require("require/database_connection.php");
 require_once __DIR__ . "/stripe-php-master/init.php";
 
-class Checkout {
+class Checkout
+{
     private $connection;
     private $user_id;
     private $cart;
@@ -11,7 +12,8 @@ class Checkout {
     private $total_items = 0;
     private $shipping_address = "";
 
-    public function __construct($connection) {
+    public function __construct($connection)
+    {
         $this->connection = $connection->connection;
         $this->user_id = $_SESSION['user']['user_id'] ?? 0;
 
@@ -19,7 +21,11 @@ class Checkout {
             $this->redirect("cart.php?msg=Please login first");
         }
 
-        if (!isset($_COOKIE['cart'][$this->user_id]) || !is_array($_COOKIE['cart'][$this->user_id]) || empty($_COOKIE['cart'][$this->user_id])) {
+        if (
+            !isset($_COOKIE['cart'][$this->user_id]) ||
+            !is_array($_COOKIE['cart'][$this->user_id]) ||
+            empty($_COOKIE['cart'][$this->user_id])
+        ) {
             $this->redirect("cart.php?msg=Your cart is empty");
         }
 
@@ -28,7 +34,8 @@ class Checkout {
         $this->setShippingAddress();
     }
 
-    private function calculateTotals() {
+    private function calculateTotals()
+    {
         foreach ($this->cart as $product_id => $item_json) {
             $item = json_decode($item_json, true);
             if ($item && isset($item['price'], $item['quantity'])) {
@@ -38,20 +45,23 @@ class Checkout {
         }
     }
 
-    private function setShippingAddress() {
+    private function setShippingAddress()
+    {
         $address = mysqli_real_escape_string($this->connection, $_REQUEST['address'] ?? '');
-        $city    = mysqli_real_escape_string($this->connection, $_REQUEST['city'] ?? '');
-        $state   = mysqli_real_escape_string($this->connection, $_REQUEST['state'] ?? '');
-        $zip     = mysqli_real_escape_string($this->connection, $_REQUEST['zip'] ?? '');
+        $city = mysqli_real_escape_string($this->connection, $_REQUEST['city'] ?? '');
+        $state = mysqli_real_escape_string($this->connection, $_REQUEST['state'] ?? '');
+        $zip = mysqli_real_escape_string($this->connection, $_REQUEST['zip'] ?? '');
         $this->shipping_address = "$address, $city, $state, $zip";
     }
 
-    private function redirect($url) {
+    private function redirect($url)
+    {
         header("Location: $url");
         exit;
     }
 
-    private function clearCart() {
+    private function clearCart()
+    {
         foreach ($this->cart as $product_id => $item) {
             setcookie("cart[$this->user_id][$product_id]", "", time() - 3600, "/");
         }
@@ -59,7 +69,8 @@ class Checkout {
         unset($_COOKIE['cart'][$this->user_id]);
     }
 
-    private function saveOrder($payment_method) {
+    private function saveOrder($payment_method)
+    {
         $query = "INSERT INTO orders (user_id, total_ammount, shipping_address, order_status, payment_method, placed_at, updated_at) 
                   VALUES ('$this->user_id', '$this->total_amount', '$this->shipping_address', 'Pending', '$payment_method', NOW(), NULL)";
         $result = mysqli_query($this->connection, $query);
@@ -71,16 +82,20 @@ class Checkout {
                 $item = json_decode($item_json, true);
                 if ($item && isset($item['quantity'], $item['price'])) {
                     $quantity = (int)$item['quantity'];
-                    $price    = (float)$item['price'];
-                    $image    = mysqli_real_escape_string($this->connection, $item['image']);
+                    $price = (float)$item['price'];
+                    $image = mysqli_real_escape_string($this->connection, $item['image']);
 
+                    // save order item properly
                     $query = "INSERT INTO order_items (order_id, image_path) 
                               VALUES ('$order_id', '$image')";
                     mysqli_query($this->connection, $query);
 
+                    // update stock & sold count correctly
                     $update_stock = "UPDATE products 
-                                     SET stock_quamtitiy = stock_quamtitiy - $quantity 
-                                     WHERE product_id = $product_id AND stock_quamtitiy >= $quantity";
+                                     SET stock_quamtitiy = stock_quamtitiy - $quantity,
+                                         sold_count = sold_count + $quantity
+                                     WHERE product_id = $product_id 
+                                     AND stock_quamtitiy >= $quantity";
                     mysqli_query($this->connection, $update_stock);
                 }
             }
@@ -91,7 +106,8 @@ class Checkout {
         return false;
     }
 
-    public function processCOD() {
+    public function processCOD()
+    {
         $order_id = $this->saveOrder("COD");
         if ($order_id) {
             $this->redirect("cart.php?msg=Thank you for your COD order!");
@@ -101,7 +117,8 @@ class Checkout {
         }
     }
 
-    public function processStripe($payment_id) {
+    public function processStripe($payment_id)
+    {
         $stripe_key = "sk_test_51RyUHVCaHnfHJUzWct6NlWfyeY3Pt37Qy5cCkUOBpbohSs5fUI6YNctzDx3KZ5tnpcMc6wFZl7RZLhW5ERkt1KLL00pP832CEg";
         \Stripe\Stripe::setApiKey($stripe_key);
 

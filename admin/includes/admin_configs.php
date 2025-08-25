@@ -386,6 +386,8 @@ if (isset($_SESSION['user']) && isset($_SESSION['user']['role_id'])) {
                             <a class="nav-link text-light" href="users.php">👥 Users</a>
                             <a class="nav-link text-light" href="category.php">📂 Categories</a>
                             <a class="nav-link text-light" href="settings.php">⚙ Settings</a>
+                            <a class="nav-link text-light" href="messages.php">💬 Messages</a>
+                            <a class="nav-link text-light" href="Newsteller.php">📝 Newsteller</a>
                             <a class="nav-link text-light" href="../index.php">
                                 <i class="bi bi-house-door-fill"></i> Go to Home
                             </a>
